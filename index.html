@@ -7,6 +7,9 @@
 <meta name="color-scheme" content="light dark">
 <link rel="preconnect" href="https://nehjwjmgmxkgxujcpric.supabase.co" crossorigin>
 <link rel="dns-prefetch" href="https://nehjwjmgmxkgxujcpric.supabase.co">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
 <meta name="description" content="HỌC VĂN — nền tảng Ngữ văn của Tổ Ngữ Văn, Trường THCS & THPT Vĩnh Hòa: giao bài, chấm bài, diễn đàn, hướng dẫn và hỏi đáp.">
 <meta property="og:title" content="HỌC VĂN — THCS & THPT Vĩnh Hòa">
 <meta property="og:description" content="Học Ngữ văn thông minh hơn: giao bài, nộp bài, chấm điểm minh bạch, diễn đàn học sinh.">
@@ -19,9 +22,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
@@ -659,6 +659,50 @@ html[data-theme="dark"] .wl-ok{color:#6ee7b7;}html[data-theme="dark"] .wl-warn{c
 .intro-cinematic .loader-bar{width:100% !important;transform-origin:left;transform:scaleX(0);animation:none !important;will-change:transform;}
 .intro-cinematic .loader-pct{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.75);margin-top:10px;z-index:5;position:relative;font-variant-numeric:tabular-nums;}
 .intro-spark{position:fixed;z-index:200001;pointer-events:none;font-size:18px;animation:hvBurst 1.2s cubic-bezier(.2,.8,.2,1) forwards;}
+
+/* ===== v4.9 · Ô đăng nhập: không bị tô sáng khó nhìn (autofill / focus) ===== */
+.auth-neon-input{color-scheme:dark;}
+.auth-neon-input:focus{background:rgba(255,255,255,.12) !important;color:#fff !important;border-color:#34d399 !important;box-shadow:0 0 0 3px rgba(52,211,153,.28) !important;}
+.auth-neon-input:-webkit-autofill,.auth-neon-input:-webkit-autofill:hover,.auth-neon-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff !important;caret-color:#fff;-webkit-box-shadow:0 0 0 1000px #1b2236 inset !important;box-shadow:0 0 0 1000px #1b2236 inset !important;border-color:#34d399 !important;transition:background-color 99999s ease-out 0s;}
+.auth-neon-input:autofill{-webkit-text-fill-color:#fff !important;box-shadow:0 0 0 1000px #1b2236 inset !important;}
+.auth-neon-input::selection{background:rgba(52,211,153,.45);color:#fff;}
+
+/* ===== v4.9 · Chế độ tập trung khi làm bài ===== */
+#hvFocusBar{display:none;}
+body.hv-focus{overflow:hidden;}
+body.hv-focus #tab-submit{position:fixed;inset:0;z-index:100000;margin:0;padding:68px 14px 12px;overflow-y:auto;animation:none;background:linear-gradient(135deg,#fdfcf8,#f6efe4);}
+html[data-theme="dark"] body.hv-focus #tab-submit{background:#0f1420;}
+body.hv-focus #tab-submit>*:not(#hvFocusBar):not(#hvPaneTabs):not(#splitView):not(#mcqArea):not(#tfArea){display:none !important;}
+body.hv-focus #hvWorkBar{display:none !important;}
+body.hv-focus #hvFocusBar{display:flex;position:fixed;top:0;left:0;right:0;z-index:100001;height:56px;align-items:center;gap:10px;padding:0 12px;background:var(--card-bg);border-bottom:1px solid var(--card-border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 6px 24px rgba(0,0,0,.1);}
+html[data-theme="light"] body.hv-focus #hvFocusBar{background:rgba(255,255,255,.92);}
+#hvFocusBar .fb-ic{width:40px;height:40px;border-radius:14px;border:1px solid var(--card-border);background:transparent;color:var(--text-main);font-size:16px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),background .2s;position:relative;}
+#hvFocusBar .fb-ic:hover{transform:scale(1.08);background:rgba(220,38,38,.1);}
+#hvFocusBar .fb-ic sup{font-size:9px;font-weight:900;color:#dc2626;position:absolute;top:2px;right:5px;}
+#hvFocusBar .fb-mid{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25;}
+#hvFocusBar .fb-mid b{font-size:14px;font-family:'Outfit',sans-serif;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#hvFocusBar .fb-mid span{font-size:10.5px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#hvFocusBar .fb-submit{height:40px;padding:0 18px;border:0;border-radius:14px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;font-weight:900;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;flex:none;box-shadow:0 8px 20px rgba(220,38,38,.35);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+#hvFocusBar .fb-submit:hover{transform:translateY(-2px) scale(1.03);}
+#hvFocusBar .fb-submit:disabled{opacity:.6;cursor:wait;}
+@media (max-width:520px){#hvFocusBar .fb-submit span{display:none;}#hvFocusBar .fb-submit{padding:0 14px;}}
+.hv-timer{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-weight:900;font-size:14px;font-variant-numeric:tabular-nums;background:rgba(16,185,129,.16);color:#047857;flex:none;}
+.hv-timer.warn{background:rgba(245,158,11,.2);color:#b45309;}
+.hv-timer.crit{background:rgba(239,68,68,.2);color:#b91c1c;animation:hvPulse 1s ease-in-out infinite;}
+html[data-theme="dark"] .hv-timer{color:#6ee7b7;}html[data-theme="dark"] .hv-timer.warn{color:#fcd34d;}html[data-theme="dark"] .hv-timer.crit{color:#fca5a5;}
+@keyframes hvPulse{50%{transform:scale(1.07);}}
+#toastNotification{z-index:100050 !important;}
+#confirmModal{z-index:100040 !important;}
+.mat-modal{z-index:100030;}
+#hvOffline{z-index:100045;}
+
+/* ===== v4.9 · Hiệu năng: containment, chế độ tiết kiệm theo mạng, View Transitions ===== */
+.hv-tile,.hv-hubcard,.mat-card,.cm-post{contain:layout style;}
+.hv-lite .glass-card,.hv-lite .cm-card,.hv-lite .hv-tile,.hv-lite .hv-hubcard{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+.hv-lite .ultra-bg .aurora{filter:blur(40px);}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.28s;animation-timing-function:cubic-bezier(.2,.8,.2,1);}
+
+.hv-timer.hidden{display:none;}
 </style>
 </head>
 <body class="h-full antialiased custom-scrollbar">
@@ -1173,7 +1217,15 @@ html[data-theme="dark"] .wl-ok{color:#6ee7b7;}html[data-theme="dark"] .wl-warn{c
     <div id="assignmentBriefPanel" class="hidden glass-card rounded-3xl p-5 space-y-3"></div>
 <div id="mcqArea" class="hidden glass-card rounded-3xl p-5 space-y-3"></div>
     <div id="tfArea" class="hidden glass-card rounded-3xl p-5 space-y-3"></div>
-    <div id="hvPaneTabs" class="hv-pane-tabs hidden"><button class="on" data-p="left" onclick="hvSetPane('left')">📄 Đề bài</button><button data-p="right" onclick="hvSetPane('right')">✍️ Bài làm</button></div>
+    <div id="hvFocusBar" role="toolbar" aria-label="Thanh làm bài">
+        <button type="button" class="fb-ic" onclick="hvFocusExit(true)" aria-label="Thoát (bài đang viết được tự lưu)" title="Thoát — bài đang viết được tự lưu"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="fb-mid"><b id="hvFocusTitle">Bài làm</b><span id="hvFocusStat"></span></div>
+        <div id="hvFocusTimer" class="hv-timer hidden" title="Thời gian còn lại"><i class="fa-regular fa-clock"></i><span id="hvFocusTime">--:--</span></div>
+        <button type="button" class="fb-ic" onclick="hvPickAttachment()" aria-label="Đính kèm file" title="Đính kèm file"><i class="fa-solid fa-paperclip"></i><sup id="hvFocusAtt"></sup></button>
+        <button type="button" id="hvFocusSubmit" class="fb-submit" onclick="hvSubmitFromBar()"><i class="fa-solid fa-paper-plane"></i><span>Gửi bài</span></button>
+    </div>
+    
+<div id="hvPaneTabs" class="hv-pane-tabs hidden"><button class="on" data-p="left" onclick="hvSetPane('left')">📄 Đề bài</button><button data-p="right" onclick="hvSetPane('right')">✍️ Bài làm</button></div>
     <div id="splitView" class="split-view hv-work hidden" data-pane="right">
         <div class="hv-pane hv-pane-left"><h3 class="font-bold text-sm mb-2 flex items-center gap-2"><i class="fa-solid fa-book-open-reader text-amber-600"></i> Đề bài</h3><div class="reading-passage custom-scrollbar" id="readingPassageContent">—</div></div>
         <div class="hv-pane hv-pane-right"><h3 class="font-bold text-sm mb-2 flex items-center gap-2"><i class="fa-solid fa-pen-fancy text-emerald-600"></i> Bài làm</h3><div class="glass-card rounded-2xl p-4 hv-editor-card"><div class="hv-editor-inner"><div class="flex justify-between items-center mb-1"><label class="block text-[11px] font-bold text-ink-500 uppercase">Nội dung</label><span class="text-[10px] text-ink-400 font-mono" id="wordCountLabel">0 từ</span></div><textarea id="submitContent" rows="10" oninput="updateWordCount();playTypingSound();antiCheatContentMonitor(this)" onpaste="blockPaste(event)" ondrop="blockDrop(event)" oncopy="blockCopy(event)" oncut="blockCopy(event)" oncontextmenu="blockContextMenu(event)" onkeydown="blockKeyboardShortcuts(event)" onbeforeinput="blockBeforeInput(event)" class="editor-hand w-full rounded-2xl focus:ring-2 focus:ring-red-400 focus:outline-none custom-scrollbar" placeholder="Viết tay bài văn..."></textarea></div></div></div>
@@ -1595,7 +1647,8 @@ html[data-theme="dark"] .wl-ok{color:#6ee7b7;}html[data-theme="dark"] .wl-warn{c
                 <div id="assignmentAttachList" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar"></div>
             </div>
             <div><label class="block text-[11px] font-bold text-ink-500 uppercase mb-1">Hạn nộp</label><div class="grid grid-cols-2 gap-3"><input type="date" id="assignmentDate" required class="input-editorial w-full px-3.5 py-2.5 rounded-xl text-xs"><input type="time" id="assignmentTime" required value="23:59" class="input-editorial w-full px-3.5 py-2.5 rounded-xl text-xs"></div></div>
-            <div><label class="block text-[11px] font-bold text-ink-500 uppercase mb-1">Hướng dẫn / Nội dung đề (xem &amp; sửa trực tiếp) <button type="button" class="hv-fmt-btn" onclick="hvFormatField('assignmentDescription')">✨ Tự định dạng thơ/văn</button></label><textarea id="assignmentDescription" rows="10" placeholder="Thêm file Word hoặc ảnh ở trên — nội dung sẽ hiện ngay tại đây. Câu hỏi AI tạo cũng tự điền vào đây để thầy/cô chỉnh sửa." class="input-editorial w-full px-3.5 py-2.5 rounded-xl text-xs"></textarea><div id="assignmentContentPreview" class="flex flex-wrap gap-2 mt-2"></div></div>
+            <div><label class="block text-[11px] font-bold text-ink-500 uppercase mb-1">⏱ Thời gian làm bài (phút) — 0 = không giới hạn</label><input id="assignmentTimeLimit" type="number" min="0" max="300" step="5" value="0" class="input-editorial w-full px-3.5 py-2.5 rounded-xl text-xs" placeholder="VD: 45"><p class="text-[10px] text-ink-400 mt-1">Đồng hồ chạy khi học sinh bấm “Bắt đầu làm bài” và không dừng dù em thoát ra. Hết giờ hệ thống tự nộp phần em đã viết (giống Azota).</p></div>
+<div><label class="block text-[11px] font-bold text-ink-500 uppercase mb-1">Hướng dẫn / Nội dung đề (xem &amp; sửa trực tiếp) <button type="button" class="hv-fmt-btn" onclick="hvFormatField('assignmentDescription')">✨ Tự định dạng thơ/văn</button></label><textarea id="assignmentDescription" rows="10" placeholder="Thêm file Word hoặc ảnh ở trên — nội dung sẽ hiện ngay tại đây. Câu hỏi AI tạo cũng tự điền vào đây để thầy/cô chỉnh sửa." class="input-editorial w-full px-3.5 py-2.5 rounded-xl text-xs"></textarea><div id="assignmentContentPreview" class="flex flex-wrap gap-2 mt-2"></div></div>
             <div id="mcqBuilder" class="hidden bg-red-50/40 p-4 rounded-xl border border-red-100 space-y-3"><div class="flex justify-between"><h4 class="font-bold text-red-800 text-xs">Trắc nghiệm</h4><button type="button" onclick="addMCQ()" class="text-[11px] font-bold text-red-700 bg-white border border-red-200 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Thêm</button></div><div id="mcqList" class="space-y-2"></div></div>
             <div id="tfBuilder" class="hidden bg-amber-50/40 p-4 rounded-xl border border-amber-100 space-y-3"><div class="flex justify-between"><h4 class="font-bold text-amber-800 text-xs">Đúng/Sai</h4><button type="button" onclick="addTF()" class="text-[11px] font-bold text-amber-700 bg-white border border-amber-200 px-3 py-1.5 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Thêm</button></div><div id="tfList" class="space-y-2"></div></div>
             <div class="bg-emerald-50/40 p-4 rounded-xl border border-emerald-100 space-y-2"><h4 class="font-bold text-emerald-800 text-xs">AI tạo câu hỏi</h4><div class="grid grid-cols-2 gap-2"><input type="text" id="autoGenTopic" placeholder="Chủ đề" class="input-editorial px-3 py-2 rounded-xl text-xs"><select id="autoGenCount" class="input-editorial text-xs rounded-xl px-3 py-2"><option value="5">5 câu</option><option value="10" selected>10 câu</option><option value="15">15 câu</option></select></div><button type="button" onclick="autoGenerateQuestions()" class="btn-primary text-xs font-bold px-4 py-2 rounded-xl w-full"><i class="fa-solid fa-robot mr-1"></i>AI tạo</button></div>
@@ -1747,7 +1800,7 @@ async function loadLocalData() {
             }
         }
     }catch(e){ console.warn('syncFromCloud', e); cloudOk = false; }
-    if(!cloudOk) loadLocalCache();
+    if(!cloudOk){ loadLocalCache(); try{ await hvIdbHydrate(); }catch(_){} }
     return cloudOk;
 }
 function saveLocalData() {
@@ -2063,7 +2116,7 @@ const SupabaseDB = {
         const names = only || (full ? ['classes','students','assignments','submissions','teachers','student_accounts'].concat(this.TABLES_X) : ['community_posts']);
         await Promise.all(names.map(async function(t){
             try{
-                const { data, error } = await SupabaseDB.client.from(t).select('*');
+                const q = SupabaseDB.client.from(t).select('*'); const { data, error } = await ((typeof AbortSignal!=='undefined' && AbortSignal.timeout) ? q.abortSignal(AbortSignal.timeout(25000)) : q);
                 if(!error){ out[t] = data || []; any = true; }
             }catch(_){}
         }));
@@ -2096,7 +2149,7 @@ const SupabaseDB = {
     _saveT:null,
     _saveSoon(){
         clearTimeout(this._saveT);
-        this._saveT = setTimeout(function(){ try{ saveLocalData(); saveDiscussionToStorage(); saveChatToStorage(); }catch(_){} }, 350);
+        this._saveT = setTimeout(function(){ hvIdle(function(){ try{ saveLocalData(); saveDiscussionToStorage(); saveChatToStorage(); }catch(_){} }, 1500); }, 350);
     },
     _applyPayload(tb, p){
         const ev = p.eventType, row = (ev==='DELETE') ? p.old : p.new;
@@ -2846,7 +2899,7 @@ async function handleStudentSubmitHomework(e){
     const splitActive = !document.getElementById('splitView').classList.contains('hidden');
     const content = splitActive ? (document.getElementById('submitContent')?.value||'').trim() : (document.getElementById('submitContentNormal')?.value||'').trim();
     const needText=!currentAssignmentContext||['Nghị luận văn học','Nghị luận xã hội','Tự luận','Đọc hiểu'].includes(type);
-    if(needText&&content.length<30&&pendingAttachments.length===0){showToast('Bài quá ngắn!','error');return;}
+    if(needText&&content.length<30&&pendingAttachments.length===0&&!window.__hvForceSubmit){showToast('Bài quá ngắn!','error');return;}
     const mcqAnswers={};
     if(currentAssignmentContext){
         const a=assignmentsData.find(x=>x.id===currentAssignmentContext);
@@ -2890,7 +2943,7 @@ async function handleStudentSubmitHomework(e){
 function renderMySubmissionsList(){const c=document.getElementById('mySubmissionsList');if(!c||!isStudentRole())return;const mine=submissionsData.filter(s=>s.studentName===currentUser.name);document.getElementById('mySubmissionCount').innerText=`${mine.length} bài`;if(!mine.length){c.innerHTML='<p class="text-xs text-ink-400 italic py-4 text-center">Chưa có bài nộp.</p>';return;}c.innerHTML=mine.map(s=>{const b=s.status==='GRADED'?`<span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Đã chấm: ${s.score}/10</span>`:`<span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded">Chờ chấm</span>`;return `<div class="p-3 bg-paper-50 rounded-xl border border-ink-100 space-y-1.5"><div class="flex justify-between"><span class="text-[10px] font-bold text-red-600">${s.type}</span>${b}</div><h5 class="font-bold text-xs truncate">${escapeHtml(s.topic)}</h5><p class="text-[10px] text-ink-400">${s.time}</p>${s.comment?`<p class="text-[11px] text-emerald-700 italic bg-emerald-50 p-2 rounded">"${escapeHtml(s.comment)}"</p>`:''}</div>`;}).join('');}
 function cancelAssignmentContext(){currentAssignmentContext=null;document.getElementById('currentAssignmentBanner').classList.add('hidden');document.getElementById('submitTopic').value='';if(document.getElementById('submitContent'))document.getElementById('submitContent').value='';if(document.getElementById('submitContentNormal'))document.getElementById('submitContentNormal').value='';pendingAttachments=[];renderAttachmentList();updateWordCount();updateWordCount2();if (typeof resetAntiCheatLog==='function') resetAntiCheatLog();}
 function startSubmitFromAssignment(id){const a=assignmentsData.find(x=>x.id===id);if(!a)return;if (typeof resetAntiCheatLog==='function') resetAntiCheatLog();currentAssignmentContext=id;document.getElementById('submitTypeText').value=a.type;document.getElementById('submitTopic').value=a.topic;if(document.getElementById('submitContent'))document.getElementById('submitContent').value='';if(document.getElementById('submitContentNormal'))document.getElementById('submitContentNormal').value='';document.getElementById('currentAssignmentBanner').classList.remove('hidden');document.getElementById('bannerAssignmentTitle').innerText=a.title;document.getElementById('bannerAssignmentDeadline').innerText=`Hạn: ${formatDeadline(a.deadline)}`;switchTab('submit');showToast('Đã mở trang giấy!','success');}
-function renderStudentAssignmentsFiltered(){ const clsId=currentClassIdForUser; const hero=document.getElementById('studentHomeHero'); if(hero){hero.classList.toggle('hidden',!isStudentRole());if(isStudentRole()){const st=studentsData.find(s=>s.id===currentUser.studentId);const cl=getClassById(currentClassIdForUser);const subs=submissionsData.filter(s=>s.studentName===currentUser.name);const pending=assignmentsData.filter(a=>a.classId===currentClassIdForUser&&!subs.some(sub=>sub.assignmentId===a.id)).length;const tbm=st?.tbm||0;document.getElementById('studentHeroName').innerText=currentUser.name;document.getElementById('studentHeroMeta').innerText=`Lớp ${cl?.name||'—'} • ${pending} bài chưa làm.`;document.getElementById('studentProgressScore').innerText=tbm.toFixed(1);document.getElementById('studentProgressRing').style.strokeDashoffset=(364.4*(1-Math.min(tbm/10,1))).toFixed(1);}} if(!clsId){document.getElementById('assignmentsGrid').innerHTML='<div class="col-span-full glass-card rounded-3xl p-12 text-center"><h3 class="font-bold">Chưa vào lớp.</h3></div>';return;} const cls=getClassById(clsId); document.getElementById('assignmentsSubtitleText').innerText=`Bài tập lớp ${cls?.name||''} — GV ${getTeacherName(cls?.teacherCode||'')}`; document.getElementById('assignmentsTitleText').innerText='Bài tập lớp em'; document.getElementById('teacherAssignmentActions').style.display='none'; document.getElementById('assignmentStatsRow').style.display='none'; document.getElementById('teacherAssignmentsView').classList.add('hidden'); const filtered=assignmentsData.filter(a=>a.classId===clsId).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)); const grid=document.getElementById('assignmentsGrid'); if(!filtered.length){grid.innerHTML='<div class="col-span-full glass-card rounded-3xl p-12 text-center"><h3 class="font-bold">Lớp em chưa có bài tập.</h3></div>';return;} grid.innerHTML=filtered.map(a=>{const st=computeDeadlineStatus(a.deadline);const mine=submissionsData.find(s=>s.assignmentId===a.id&&s.studentName===currentUser.name);return `<div class="profile-card p-5 space-y-3 flex flex-col ${st.code==='URGENT'?'urgent-deadline':''}"><div class="flex justify-between items-start gap-2"><span class="bg-red-50 text-red-700 border border-red-200 text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase">${a.type}</span><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${st.code==='EXPIRED'?'bg-paper-100 text-ink-500 border-ink-100':st.code==='URGENT'?'bg-rose-100 text-rose-700 border-rose-200':'bg-emerald-100 text-emerald-700 border-emerald-200'}">${st.label}</span></div><h3 class="font-black text-base leading-tight">${escapeHtml(a.title)}</h3><p class="text-xs text-ink-600 italic">${escapeHtml(a.topic)}</p>${a.answerKey?'<p class="text-[10px] font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-full"><i class="fa-solid fa-key mr-1"></i>GV đã đưa đáp án</p>':''}<div class="space-y-1 pt-2 border-t border-ink-100 text-[11px]"><div><i class="fa-solid fa-calendar-day text-red-500 w-4"></i> ${formatDeadline(a.deadline)}</div><div><i class="fa-solid fa-hourglass-half text-amber-500 w-4"></i> ${formatCountdown(a.deadline)}</div><div><i class="fa-solid fa-paper-plane text-blue-500 w-4"></i> Giao lúc ${formatCreated(a.createdAt)} <span class="hv-ago" data-ts="${hvParseDate(a.createdAt)||''}">(${hvAgo(a.createdAt)})</span></div></div>${hvAsgBadges(a)}${mine?`<div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2 flex items-center gap-2 mt-2"><i class="fa-solid fa-check-circle text-emerald-600"></i><div class="text-[11px] font-bold text-emerald-700">Đã nộp — ${mine.status==='GRADED'?'Điểm: '+mine.score:'Chờ chấm'}</div></div>`:`<button onclick="startSubmitFromAssignment('${a.id}')" class="btn-primary text-xs font-bold py-2 rounded-lg mt-2"><i class="fa-solid fa-pen-fancy mr-1"></i>Làm bài</button>`}</div>`;}).join(''); }
+function renderStudentAssignmentsFiltered(){ const clsId=currentClassIdForUser; const hero=document.getElementById('studentHomeHero'); if(hero){hero.classList.toggle('hidden',!isStudentRole());if(isStudentRole()){const st=studentsData.find(s=>s.id===currentUser.studentId);const cl=getClassById(currentClassIdForUser);const subs=submissionsData.filter(s=>s.studentName===currentUser.name);const pending=assignmentsData.filter(a=>a.classId===currentClassIdForUser&&!subs.some(sub=>sub.assignmentId===a.id)).length;const tbm=st?.tbm||0;document.getElementById('studentHeroName').innerText=currentUser.name;document.getElementById('studentHeroMeta').innerText=`Lớp ${cl?.name||'—'} • ${pending} bài chưa làm.`;document.getElementById('studentProgressScore').innerText=tbm.toFixed(1);document.getElementById('studentProgressRing').style.strokeDashoffset=(364.4*(1-Math.min(tbm/10,1))).toFixed(1);}} if(!clsId){document.getElementById('assignmentsGrid').innerHTML='<div class="col-span-full glass-card rounded-3xl p-12 text-center"><h3 class="font-bold">Chưa vào lớp.</h3></div>';return;} const cls=getClassById(clsId); document.getElementById('assignmentsSubtitleText').innerText=`Bài tập lớp ${cls?.name||''} — GV ${getTeacherName(cls?.teacherCode||'')}`; document.getElementById('assignmentsTitleText').innerText='Bài tập lớp em'; document.getElementById('teacherAssignmentActions').style.display='none'; document.getElementById('assignmentStatsRow').style.display='none'; document.getElementById('teacherAssignmentsView').classList.add('hidden'); const filtered=assignmentsData.filter(a=>a.classId===clsId).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)); const grid=document.getElementById('assignmentsGrid'); if(!filtered.length){grid.innerHTML='<div class="col-span-full glass-card rounded-3xl p-12 text-center"><h3 class="font-bold">Lớp em chưa có bài tập.</h3></div>';return;} grid.innerHTML=filtered.map(a=>{const st=computeDeadlineStatus(a.deadline);const mine=submissionsData.find(s=>s.assignmentId===a.id&&s.studentName===currentUser.name);return `<div class="profile-card p-5 space-y-3 flex flex-col ${st.code==='URGENT'?'urgent-deadline':''}"><div class="flex justify-between items-start gap-2"><span class="bg-red-50 text-red-700 border border-red-200 text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase">${a.type}</span><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${st.code==='EXPIRED'?'bg-paper-100 text-ink-500 border-ink-100':st.code==='URGENT'?'bg-rose-100 text-rose-700 border-rose-200':'bg-emerald-100 text-emerald-700 border-emerald-200'}">${st.label}</span></div><h3 class="font-black text-base leading-tight">${escapeHtml(a.title)}</h3><p class="text-xs text-ink-600 italic">${escapeHtml(a.topic)}</p>${a.answerKey?'<p class="text-[10px] font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-full"><i class="fa-solid fa-key mr-1"></i>GV đã đưa đáp án</p>':''}<div class="space-y-1 pt-2 border-t border-ink-100 text-[11px]"><div><i class="fa-solid fa-calendar-day text-red-500 w-4"></i> ${formatDeadline(a.deadline)}</div><div><i class="fa-solid fa-hourglass-half text-amber-500 w-4"></i> ${formatCountdown(a.deadline)}</div><div><i class="fa-solid fa-paper-plane text-blue-500 w-4"></i> Giao lúc ${formatCreated(a.createdAt)} <span class="hv-ago" data-ts="${hvParseDate(a.createdAt)||''}">(${hvAgo(a.createdAt)})</span></div></div>${hvAsgBadges(a)}${mine?`<div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2 flex items-center gap-2 mt-2"><i class="fa-solid fa-check-circle text-emerald-600"></i><div class="text-[11px] font-bold text-emerald-700">Đã nộp — ${mine.status==='GRADED'?'Điểm: '+mine.score:'Chờ chấm'}</div></div>`:`<button onclick="startSubmitFromAssignment('${a.id}')" class="btn-primary text-xs font-bold py-2 rounded-lg mt-2"><i class="fa-solid fa-pen-fancy mr-1"></i>${a.timeLimit>0?'Bắt đầu làm bài':'Làm bài'}</button>`}</div>`;}).join(''); }
 
 /* ========== TEACHER ASSIGNMENTS ========== */
 function renderAssignments(){ if(!isTeacherRole())return; const vis=getVisibleClassIds(); let filtered=assignmentsData.filter(a=>vis.includes(a.classId)); filtered.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)); let open=0,urg=0,exp=0; const all=assignmentsData.filter(a=>vis.includes(a.classId)); all.forEach(a=>{const s=computeDeadlineStatus(a.deadline).code;if(s==='OPEN')open++;else if(s==='URGENT')urg++;else exp++;}); document.getElementById('stat-assign-total').innerText=all.length;document.getElementById('stat-assign-open').innerText=open;document.getElementById('stat-assign-urgent').innerText=urg;document.getElementById('stat-assign-expired').innerText=exp; renderTeacherStudentStatus(); const grid=document.getElementById('assignmentsGrid'); if(!filtered.length){grid.innerHTML='<div class="col-span-full glass-card rounded-3xl p-12 text-center"><h3 class="font-bold">Chưa có bài.</h3></div>';return;} grid.innerHTML=filtered.map(a=>{const st=computeDeadlineStatus(a.deadline);const subm=submissionsData.filter(s=>s.assignmentId===a.id).length;const total=getStudentsByClass(a.classId).length;const pct=total?Math.round((subm/total)*100):0;return `<div class="profile-card p-5 space-y-3 flex flex-col ${st.code==='URGENT'?'urgent-deadline':''}"><div class="flex justify-between items-start gap-2"><span class="bg-red-50 text-red-700 border border-red-200 text-[10px] font-extrabold px-2 py-0.5 rounded-lg uppercase">${a.type}</span><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${st.code==='EXPIRED'?'bg-paper-100 text-ink-500':st.code==='URGENT'?'bg-rose-100 text-rose-700':'bg-emerald-100 text-emerald-700'}">${st.label}</span></div><h3 class="font-black text-base leading-tight">${escapeHtml(a.title)}</h3><p class="text-xs text-ink-600 italic">${escapeHtml(a.topic)}</p>${a.answerKey?'<p class="text-[10px] font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-full"><i class="fa-solid fa-key mr-1"></i>Đã có đáp án GV</p>':''}<div class="space-y-1 pt-2 border-t border-ink-100 text-[11px]"><div><i class="fa-solid fa-calendar-day text-red-500 w-4"></i> ${formatDeadline(a.deadline)}</div><div><i class="fa-solid fa-school text-blue-500 w-4"></i> ${getClassLabel(a.classId)}</div><div><i class="fa-solid fa-paper-plane text-blue-500 w-4"></i> Giao lúc ${formatCreated(a.createdAt)} <span class="hv-ago" data-ts="${hvParseDate(a.createdAt)||''}">(${hvAgo(a.createdAt)})</span></div></div><div class="space-y-1.5 pt-2 border-t border-ink-100"><div class="flex justify-between text-[10px] font-bold"><span>Tiến độ</span><span class="text-red-600">${subm}/${total} (${pct}%)</span></div><div class="w-full h-1.5 bg-paper-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-red-500 to-emerald-500" style="width:${pct}%"></div></div></div><div class="flex gap-1.5 pt-1"><button onclick="openEditAssignmentModal('${a.id}')" class="flex-1 btn-ghost text-red-700 text-[11px] font-bold py-1.5 rounded-lg"><i class="fa-solid fa-pen mr-1"></i>Sửa</button><button onclick="deleteAssignment('${a.id}')" class="bg-rose-50 text-rose-700 text-[11px] font-bold py-1.5 px-2.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></div></div>`;}).join(''); }
@@ -2971,10 +3024,10 @@ async function handleAssignmentFileSelect(e){
 
 function renderAssignmentAttachList(){const c=document.getElementById('assignmentAttachList');const pv=document.getElementById('assignmentContentPreview');if(pv){pv.innerHTML=pendingAssignmentAttachments.map((a,i)=>/^image\//.test(a.type||'')?`<div style="position:relative;width:96px;height:96px;border-radius:12px;overflow:hidden;border:1px solid #dbeafe;background:#fff"><img src="${a.dataUrl}" alt="${escapeHtml(a.name)}" style="width:100%;height:100%;object-fit:cover"><button type="button" onclick="pendingAssignmentAttachments.splice(${i},1);renderAssignmentAttachList()" style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:0;font-size:10px;cursor:pointer"><i class="fa-solid fa-xmark"></i></button></div>`:'').join('');}if(!c)return;if(!pendingAssignmentAttachments.length){c.innerHTML='<p class="text-[10px] text-ink-400 italic">Chưa có file.</p>';return;}c.innerHTML=pendingAssignmentAttachments.map((a,i)=>`<div style="display:flex; align-items:center; gap:8px; padding:8px; background:white; border-radius:10px; border:1px solid #dbeafe; font-size:11px;"><i class="fa-solid ${/^image\//.test(a.type||'')?'fa-image':'fa-file'} text-blue-500"></i><span style="flex:1; font-weight:700; word-break:break-all">${escapeHtml(a.name)}</span><span style="font-size:10px; color:#999;">${(a.size/1024).toFixed(1)}KB</span><button type="button" onclick="pendingAssignmentAttachments.splice(${i},1);renderAssignmentAttachList()" style="color:#999; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button></div>`).join('');}
 async function autoGenerateQuestions(){const topic=document.getElementById('autoGenTopic').value.trim();const count=parseInt(document.getElementById('autoGenCount').value);if(!topic){showToast('Nhập chủ đề!','error');return;}showToast('AI đang tạo...','success');const sys=`Tạo ${count} câu hỏi trắc nghiệm về: "${topic}". JSON: [{"text":"...","options":["A","B","C","D"],"correct":0}]`;try{let raw;if(GeminiAI.hasKey())raw=await GeminiAI.generate({prompt:`Tạo ${count} câu về: ${topic}`,systemPrompt:sys,temperature:0.6,maxTokens:2500});else raw=await callAI(sys,`Tạo ${count} câu về: ${topic}`,{temperature:0.6,maxTokens:2500});const m=raw.match(/\[[\s\S]*\]/);const arr=JSON.parse(m?m[0]:raw);mcqList=arr.map(q=>({text:q.text,options:q.options||['','','',''],correct:q.correct||0}));document.getElementById('assignmentType').value='Trắc nghiệm';onAssignTypeChange();renderMCQBuilder();appendAssignmentContent(questionsToText(mcqList));appendAssignmentContent(questionsAnswerText(mcqList),'assignmentAnswerKey');showToast(`Đã tạo ${mcqList.length} câu và điền vào đề!`,'success');}catch(e){showToast('Lỗi AI: '+e.message,'error');}}
-function openAddAssignmentModal(){document.getElementById('assignmentModalTitle').innerHTML='<i class="fa-solid fa-clipboard-list text-red-600 mr-1"></i>Giao bài';document.getElementById('assignmentEditId').value='-1';document.getElementById('assignmentForm').reset();document.getElementById('assignmentSaveBtnText').innerText='Giao';mcqList=[];tfList=[];pendingAssignmentAttachments=[];document.getElementById('mcqList').innerHTML='';document.getElementById('tfList').innerHTML='';document.getElementById('assignmentAttachList').innerHTML='';document.getElementById('mcqBuilder').classList.add('hidden');document.getElementById('tfBuilder').classList.add('hidden');document.getElementById('assignmentDate').value=hvVNParts(hvNow()+7*86400000).date;document.getElementById('assignmentTime').value='23:59';populateClassDropdowns();const vis=getVisibleClasses();if(vis.length)document.getElementById('assignmentClass').value=vis[0].id;openModalShell('assignmentModal');}
-function openEditAssignmentModal(id){const a=assignmentsData.find(x=>x.id===id);if(!a)return;document.getElementById('assignmentModalTitle').innerHTML='<i class="fa-solid fa-pen text-red-600 mr-1"></i>Sửa';document.getElementById('assignmentEditId').value=id;document.getElementById('assignmentTitle').value=a.title||'';document.getElementById('assignmentType').value=a.type||'Nghị luận văn học';populateClassDropdowns();document.getElementById('assignmentClass').value=a.classId||'';document.getElementById('assignmentTopic').value=a.topic||'';document.getElementById('assignmentDescription').value=a.description||'';document.getElementById('assignmentAnswerKey').value=a.answerKey||'';document.getElementById('assignmentRubricGuide').value=a.rubricGuide||'';document.getElementById('assignmentReadingPassage').value=a.readingPassage||'';if(a.deadline){const p=hvVNParts(a.deadline);document.getElementById('assignmentDate').value=p.date;document.getElementById('assignmentTime').value=p.time;}document.getElementById('assignmentSaveBtnText').innerText='Cập nhật';mcqList=(a.mcqs||[]).map(q=>({...q,options:[...q.options]}));tfList=(a.tfs||[]).map(q=>({...q}));pendingAssignmentAttachments=(a.attachments||[]).slice();onAssignTypeChange();renderMCQBuilder();renderTFBuilder();renderAssignmentAttachList();openModalShell('assignmentModal');}
+function openAddAssignmentModal(){document.getElementById('assignmentModalTitle').innerHTML='<i class="fa-solid fa-clipboard-list text-red-600 mr-1"></i>Giao bài';document.getElementById('assignmentEditId').value='-1';document.getElementById('assignmentForm').reset();document.getElementById('assignmentSaveBtnText').innerText='Giao';mcqList=[];tfList=[];pendingAssignmentAttachments=[];document.getElementById('mcqList').innerHTML='';document.getElementById('tfList').innerHTML='';document.getElementById('assignmentAttachList').innerHTML='';document.getElementById('mcqBuilder').classList.add('hidden');document.getElementById('tfBuilder').classList.add('hidden');document.getElementById('assignmentDate').value=hvVNParts(hvNow()+7*86400000).date;{const _tl=document.getElementById('assignmentTimeLimit');if(_tl)_tl.value=0;}document.getElementById('assignmentTime').value='23:59';populateClassDropdowns();const vis=getVisibleClasses();if(vis.length)document.getElementById('assignmentClass').value=vis[0].id;openModalShell('assignmentModal');}
+function openEditAssignmentModal(id){const a=assignmentsData.find(x=>x.id===id);if(!a)return;document.getElementById('assignmentModalTitle').innerHTML='<i class="fa-solid fa-pen text-red-600 mr-1"></i>Sửa';document.getElementById('assignmentEditId').value=id;document.getElementById('assignmentTitle').value=a.title||'';document.getElementById('assignmentType').value=a.type||'Nghị luận văn học';populateClassDropdowns();document.getElementById('assignmentClass').value=a.classId||'';document.getElementById('assignmentTopic').value=a.topic||'';document.getElementById('assignmentDescription').value=a.description||'';document.getElementById('assignmentAnswerKey').value=a.answerKey||'';document.getElementById('assignmentRubricGuide').value=a.rubricGuide||'';document.getElementById('assignmentReadingPassage').value=a.readingPassage||'';if(a.deadline){const p=hvVNParts(a.deadline);document.getElementById('assignmentDate').value=p.date;document.getElementById('assignmentTime').value=p.time;}{const _tl=document.getElementById('assignmentTimeLimit');if(_tl)_tl.value=a.timeLimit||0;}document.getElementById('assignmentSaveBtnText').innerText='Cập nhật';mcqList=(a.mcqs||[]).map(q=>({...q,options:[...q.options]}));tfList=(a.tfs||[]).map(q=>({...q}));pendingAssignmentAttachments=(a.attachments||[]).slice();onAssignTypeChange();renderMCQBuilder();renderTFBuilder();renderAssignmentAttachList();openModalShell('assignmentModal');}
 function closeAssignmentModal(){closeModalShell('assignmentModal');}
-async function handleSaveAssignment(e){if(e)e.preventDefault();const id=document.getElementById('assignmentEditId').value;const title=document.getElementById('assignmentTitle').value.trim();const type=document.getElementById('assignmentType').value;const classId=document.getElementById('assignmentClass').value;const topic=document.getElementById('assignmentTopic').value.trim();const answerKey=document.getElementById('assignmentAnswerKey').value.trim();const rubricGuide=document.getElementById('assignmentRubricGuide').value.trim();const readingPassage=document.getElementById('assignmentReadingPassage').value.trim();const date=document.getElementById('assignmentDate').value;const time=document.getElementById('assignmentTime').value||'23:59';const description=document.getElementById('assignmentDescription').value.trim();const allowLate=document.getElementById('assignmentNotify').checked;if(!title||!topic||!date||!classId){showToast('Điền đủ!','error');return;}const obj={title,type,classId,topic,description,answerKey,rubricGuide,readingPassage,deadline:hvToInstant(date,time),dlv:2,allowLate,mcqs:(type==='Trắc nghiệm'||type==='Hỗn hợp')?mcqList.filter(q=>q.text):[],tfs:(type==='Đúng/Sai'||type==='Hỗn hợp')?tfList.filter(q=>q.text):[],attachments: pendingAssignmentAttachments.slice()};let full;if(id==='-1'){obj.id='ASG_'+Date.now();obj.createdAt=new Date(hvNow()).toISOString();obj.createdBy=currentUser.name;obj.teacherCode=(getClassById(classId)||{}).teacherCode||currentUser.teacherCode||'';full=obj;}else{const old=assignmentsData.find(x=>x.id===id);if(!old)return;full={...old,...obj};}const ok=await SupabaseDB.commit(()=>SupabaseDB.upsert('assignments',SupabaseDB.row.assignments(full)));if(!ok)return;if(id==='-1')assignmentsData.unshift(full);else{const i=assignmentsData.findIndex(x=>x.id===id);if(i!==-1)assignmentsData[i]=full;}saveLocalData();broadcastRT('submission_new',{});closeAssignmentModal();if(isTeacherRole())renderAssignments();else renderStudentAssignmentsFiltered();showToast('Đã lưu!','success');}
+async function handleSaveAssignment(e){if(e)e.preventDefault();const id=document.getElementById('assignmentEditId').value;const title=document.getElementById('assignmentTitle').value.trim();const type=document.getElementById('assignmentType').value;const classId=document.getElementById('assignmentClass').value;const topic=document.getElementById('assignmentTopic').value.trim();const answerKey=document.getElementById('assignmentAnswerKey').value.trim();const rubricGuide=document.getElementById('assignmentRubricGuide').value.trim();const readingPassage=document.getElementById('assignmentReadingPassage').value.trim();const date=document.getElementById('assignmentDate').value;const time=document.getElementById('assignmentTime').value||'23:59';const description=document.getElementById('assignmentDescription').value.trim();const allowLate=document.getElementById('assignmentNotify').checked;if(!title||!topic||!date||!classId){showToast('Điền đủ!','error');return;}const obj={title,type,classId,topic,description,answerKey,rubricGuide,readingPassage,deadline:hvToInstant(date,time),dlv:2,timeLimit:Math.max(0,Math.min(300,parseInt((document.getElementById('assignmentTimeLimit')||{}).value)||0)),allowLate,mcqs:(type==='Trắc nghiệm'||type==='Hỗn hợp')?mcqList.filter(q=>q.text):[],tfs:(type==='Đúng/Sai'||type==='Hỗn hợp')?tfList.filter(q=>q.text):[],attachments: pendingAssignmentAttachments.slice()};let full;if(id==='-1'){obj.id='ASG_'+Date.now();obj.createdAt=new Date(hvNow()).toISOString();obj.createdBy=currentUser.name;obj.teacherCode=(getClassById(classId)||{}).teacherCode||currentUser.teacherCode||'';full=obj;}else{const old=assignmentsData.find(x=>x.id===id);if(!old)return;full={...old,...obj};}const ok=await SupabaseDB.commit(()=>SupabaseDB.upsert('assignments',SupabaseDB.row.assignments(full)));if(!ok)return;if(id==='-1')assignmentsData.unshift(full);else{const i=assignmentsData.findIndex(x=>x.id===id);if(i!==-1)assignmentsData[i]=full;}saveLocalData();broadcastRT('submission_new',{});closeAssignmentModal();if(isTeacherRole())renderAssignments();else renderStudentAssignmentsFiltered();showToast('Đã lưu!','success');}
 function deleteAssignment(id){showConfirm('Xóa bài tập?','Bài tập sẽ bị xóa.',async()=>{const ok=await SupabaseDB.commit(()=>SupabaseDB.remove('assignments','id',id));if(!ok)return;assignmentsData=assignmentsData.filter(x=>x.id!==id);saveLocalData();renderAssignments();showToast('Đã xóa!','success');});}
 
 /* ========== CLASSES ========== */
@@ -3225,9 +3278,9 @@ const VoiceStudio={ recorder:null,chunks:[],stream:null,audioCtx:null,analyser:n
     async startRecording(){ const btn=document.getElementById('voiceRecordBtn'); const stopBtn=document.getElementById('voiceStopBtn'); const playBtn=document.getElementById('voicePlayBtn'); const dlBtn=document.getElementById('voiceDownloadBtn'); const result=document.getElementById('voiceResult'); try{ this.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); this.audioCtx=new (window.AudioContext||window.webkitAudioContext)(); const source=this.audioCtx.createMediaStreamSource(this.stream); this.analyser=this.audioCtx.createAnalyser();this.analyser.fftSize=2048; source.connect(this.analyser); this.recorder=new MediaRecorder(this.stream,{mimeType:this.pickMime()}); this.chunks=[]; this.recorder.ondataavailable=e=>{if(e.data&&e.data.size>0)this.chunks.push(e.data);}; this.recorder.onstop=()=>this.onStop(); this.recorder.start(100); this.startTime=Date.now(); btn.classList.remove('idle');btn.classList.add('recording'); btn.innerHTML='<i class="fa-solid fa-stop"></i>'; if(stopBtn)stopBtn.classList.remove('hidden'); if(playBtn)playBtn.classList.add('hidden'); if(dlBtn)dlBtn.classList.add('hidden'); result.innerHTML='<p class="text-sm font-bold text-rose-600"><i class="fa-solid fa-circle text-xs animate-pulse"></i> Đang ghi âm... <span id="voiceTimer">00:00</span></p>'; this.drawWave();this.startTimer();SoundEngine.play('notify'); setTimeout(()=>{if(this.recorder&&this.recorder.state==='recording')this.stopRecording();},5*60*1000); }catch(e){showToast('Không truy cập được micro: '+e.message,'error');SoundEngine.play('error');} },
     pickMime(){const opts=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'];for(const m of opts)if(MediaRecorder.isTypeSupported(m))return m;return'';},
     stopRecording(){if(this.recorder&&this.recorder.state==='recording')this.recorder.stop();if(this.stream){this.stream.getTracks().forEach(t=>t.stop());this.stream=null;}cancelAnimationFrame(this.animFrame);clearInterval(this.timerInterval);if(this.audioCtx){this.audioCtx.close().catch(()=>{});this.audioCtx=null;}},
-    onStop(){ const btn=document.getElementById('voiceRecordBtn');const stopBtn=document.getElementById('voiceStopBtn');const playBtn=document.getElementById('voicePlayBtn');const dlBtn=document.getElementById('voiceDownloadBtn');const result=document.getElementById('voiceResult'); const mime=this.recorder.mimeType||'audio/webm'; this.audioBlob=new Blob(this.chunks,{type:mime}); this.audioUrl=URL.createObjectURL(this.audioBlob); const duration=Math.floor((Date.now()-this.startTime)/1000); const sizeKB=(this.audioBlob.size/1024).toFixed(1); if(btn){btn.classList.remove('recording');btn.classList.add('idle');btn.innerHTML='<i class="fa-solid fa-microphone"></i>';} if(stopBtn)stopBtn.classList.add('hidden'); if(playBtn)playBtn.classList.remove('hidden'); if(dlBtn)dlBtn.classList.remove('hidden'); if(result)result.innerHTML=`<div class="inline-flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5"><i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i><div class="text-left"><p class="text-xs font-bold text-emerald-800">Đã ghi âm xong!</p><p class="text-[10px] text-emerald-600">${duration}s • ${sizeKB} KB • ${mime.split(';')[0]}</p></div></div><audio id="voicePreviewAudio" controls src="${this.audioUrl}" class="mt-3 w-full max-w-md mx-auto" style="height:40px;"></audio>`; SoundEngine.play('achievement'); if(window.confetti)confetti({particleCount:40,spread:60,origin:{y:0.8}}); },
+    onStop(){ const btn=document.getElementById('voiceRecordBtn');const stopBtn=document.getElementById('voiceStopBtn');const playBtn=document.getElementById('voicePlayBtn');const dlBtn=document.getElementById('voiceDownloadBtn');const result=document.getElementById('voiceResult'); const mime=this.recorder.mimeType||'audio/webm'; this.audioBlob=new Blob(this.chunks,{type:mime}); this.audioUrl=hvObjUrl(this.audioBlob); const duration=Math.floor((Date.now()-this.startTime)/1000); const sizeKB=(this.audioBlob.size/1024).toFixed(1); if(btn){btn.classList.remove('recording');btn.classList.add('idle');btn.innerHTML='<i class="fa-solid fa-microphone"></i>';} if(stopBtn)stopBtn.classList.add('hidden'); if(playBtn)playBtn.classList.remove('hidden'); if(dlBtn)dlBtn.classList.remove('hidden'); if(result)result.innerHTML=`<div class="inline-flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5"><i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i><div class="text-left"><p class="text-xs font-bold text-emerald-800">Đã ghi âm xong!</p><p class="text-[10px] text-emerald-600">${duration}s • ${sizeKB} KB • ${mime.split(';')[0]}</p></div></div><audio id="voicePreviewAudio" controls src="${this.audioUrl}" class="mt-3 w-full max-w-md mx-auto" style="height:40px;"></audio>`; SoundEngine.play('achievement'); if(window.confetti)confetti({particleCount:40,spread:60,origin:{y:0.8}}); },
     play(){const audio=document.getElementById('voicePreviewAudio');if(audio){audio.play();SoundEngine.play('click');}},
-    download(){ if(!this.audioBlob){showToast('Chưa có bản ghi âm!','error');return;} const url=URL.createObjectURL(this.audioBlob); const a=document.createElement('a'); a.href=url; const name=(currentUser?.name||'HS').replace(/\s+/g,'_'); const ext=(this.audioBlob.type.includes('mp4'))?'m4a':'webm'; a.download=`LuyenDoc_${name}_${Date.now()}.${ext}`; document.body.appendChild(a);a.click();a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showToast('Đã tải file ghi âm!','success'); SoundEngine.play('success'); },
+    download(){ if(!this.audioBlob){showToast('Chưa có bản ghi âm!','error');return;} const url=hvObjUrl(this.audioBlob); const a=document.createElement('a'); a.href=url; const name=(currentUser?.name||'HS').replace(/\s+/g,'_'); const ext=(this.audioBlob.type.includes('mp4'))?'m4a':'webm'; a.download=`LuyenDoc_${name}_${Date.now()}.${ext}`; document.body.appendChild(a);a.click();a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showToast('Đã tải file ghi âm!','success'); SoundEngine.play('success'); },
     startTimer(){clearInterval(this.timerInterval);this.timerInterval=setInterval(()=>{const sec=Math.floor((Date.now()-this.startTime)/1000);const m=String(Math.floor(sec/60)).padStart(2,'0');const s=String(sec%60).padStart(2,'0');const el=document.getElementById('voiceTimer');if(el)el.innerText=`${m}:${s}`;},250);},
     drawWave(){ const canvas=document.getElementById('voiceWave');if(!canvas||!this.analyser)return; const ctx=canvas.getContext('2d');const dpr=window.devicePixelRatio||1; const w=canvas.width=canvas.clientWidth*dpr;const h=canvas.height=canvas.clientHeight*dpr; const data=new Uint8Array(this.analyser.frequencyBinCount); const draw=()=>{this.animFrame=requestAnimationFrame(draw);this.analyser.getByteTimeDomainData(data);ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,w,h);ctx.strokeStyle='rgba(220,38,38,.1)';ctx.lineWidth=1;for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(0,h*i/4);ctx.lineTo(w,h*i/4);ctx.stroke();}ctx.lineWidth=3*dpr;const grad=ctx.createLinearGradient(0,0,w,0);grad.addColorStop(0,'#dc2626');grad.addColorStop(0.5,'#10b981');grad.addColorStop(1,'#2563eb');ctx.strokeStyle=grad;ctx.beginPath();const sliceW=w/data.length;for(let i=0;i<data.length;i++){const v=data[i]/128.0;const y=(v*h)/2;if(i===0)ctx.moveTo(0,y);else ctx.lineTo(i*sliceW,y);}ctx.stroke();};draw(); }
 };
@@ -3438,7 +3491,7 @@ function buildMobileNav(){
 /* =====================================================================
    v4.3 · CỘNG ĐỒNG HỌC SINH · ĐÁNH GIÁ · PWA · MINH BẠCH
    ===================================================================== */
-const HV_VERSION='4.8.0';
+const HV_VERSION='4.9.0';
 let communityPosts=[]; let feedbackList=[];
 try{ communityPosts=JSON.parse(safeGetItem('hv_cm_cache','[]'))||[]; }catch(_){ communityPosts=[]; }
 const CM_CATS=[{id:'all',label:'Tất cả',icon:'🌈'},{id:'hoi',label:'Hỏi bài',icon:'🙋'},{id:'chia-se',label:'Chia sẻ',icon:'✨'},{id:'goc-van',label:'Góc văn',icon:'✍️'},{id:'huong-dan',label:'Dùng web',icon:'🧭'},{id:'tro-chuyen',label:'Trò chuyện',icon:'💬'}];
@@ -3494,7 +3547,7 @@ function showCommunityPage(tab){
     clearInterval(cmFactTimer);cmRotateFact(true);cmFactTimer=setInterval(cmRotateFact,6500);
     if(hvDeferredInstall){const b=document.getElementById('cmInstall');if(b)b.style.display='inline-flex';}
 }
-function hideCommunity(){const p=document.getElementById('communityPage');if(p){p.classList.add('hidden');p.style.display='none';}clearInterval(cmFactTimer);stopCommunityPresence();}
+function hideCommunity(){const p=document.getElementById('communityPage');if(p){p.classList.add('hidden');p.style.display='none';}clearInterval(cmFactTimer);stopCommunityPresence();const _cc=document.getElementById('cmContent');if(_cc)_cc.innerHTML='';}
 function communityExit(){hideCommunity();showLanding();}
 function communityGoLogin(){hideCommunity();showLanding();showAuth('login');}
 function openAccountPortal(){hideCommunity();showAccountPortal();}
@@ -3642,7 +3695,7 @@ function cmTrustHtml(){
     ['🛡️ Quy tắc ứng xử & kiểm duyệt','Đây là ứng dụng của nhà trường: cấm tuyệt đối lời lẽ xúc phạm, miệt thị, đe dọa. Hệ thống tự chặn từ ngữ không phù hợp; bài bị báo cáo từ 3 lần sẽ bị ẩn và quản trị viên xem xét, có thể xóa.'],
     ['✋ Quyền của em','Em có thể yêu cầu xem, sửa hoặc xóa dữ liệu của mình thông qua giáo viên bộ môn hoặc nhà trường. Em có thể thu hồi bài đăng/bình luận của mình bất cứ lúc nào.']
     ],true)+'</div><div class="cm-card"><div class="cm-h">🆕 Phiên bản '+HV_VERSION+'</div>'+
-    ['Bàn làm bài 2 bên (đề | bài làm) vừa khít màn hình, có nút Gửi bài luôn hiện; tự định dạng thơ/văn; tự lưu bản nháp; Nhật ký làm bài ghi lại học sinh rời màn hình như Azota; intro mượt hơn.','Đề bài hiển thị cho học sinh (nội dung, ảnh, file); thời gian giao bài theo giờ Việt Nam; đăng nhập giáo viên bắt buộc Mã GV khớp tài khoản; tăng tốc GPU và canvas tự giữ 60 FPS.','Chia nhỏ chức năng: Trang chủ → Nhóm → Ô chức năng, mỗi ô ghi rõ làm được gì, dùng khi nào; có tìm nhanh và thanh quay lại.','Học liệu mới: giáo viên tải bài giảng, tiết dạy online, tác phẩm, video, hình ảnh cho học sinh tham khảo.','Bài nộp luôn khớp với tài khoản đang có; email/mật khẩu tạo theo tên (vd thanhdat@edu.vn, ThanhDat12B).','Trang chủ & intro nâng cấp: băng chuyền tính năng, thử thách Ngữ văn, thẻ biện pháp tu từ, cộng đồng, mục Minh bạch.','Hiệu ứng mới: đèn rọi theo chuột, nghiêng 3D, gợn sóng khi bấm, hiện dần khi cuộn, chuyển mục mượt.','Cloud nhanh hơn: bắt đầu đồng bộ ngay khi mở web, realtime chỉ tải đúng bảng thay đổi, thanh tiến trình đồng bộ.','Cổng học sinh mới: diễn đàn, hướng dẫn, tài liệu tham khảo, hỏi đáp.','Chế độ sáng/tối được thiết kế lại, dễ nhìn hơn.','Mục Đánh giá & báo lỗi dành cho mọi người dùng (có lọc từ ngữ).','Dữ liệu lấy từ Supabase làm gốc, đồng bộ thời gian thực; hiển thị giờ cập nhật gần nhất.','Hỗ trợ cài như ứng dụng, thông báo mất kết nối, tự báo khi có bản mới.','Giao bài: thêm Word/ảnh hiện thẳng vào đề, câu hỏi AI tự điền để chỉnh sửa.'].map(function(t){return '<div class="cm-rule"><span>✅</span><span>'+t+'</span></div>';}).join('')+
+    ['Chế độ tập trung khi làm bài (chỉ còn mũi tên thoát và nút Gửi bài), đồng hồ giới hạn thời gian do giáo viên đặt và tự nộp khi hết giờ, ô đăng nhập dễ nhìn, nhiều tối ưu hiệu năng (Worker, IndexedDB, Service Worker mới).','Bàn làm bài 2 bên (đề | bài làm) vừa khít màn hình, có nút Gửi bài luôn hiện; tự định dạng thơ/văn; tự lưu bản nháp; Nhật ký làm bài ghi lại học sinh rời màn hình như Azota; intro mượt hơn.','Đề bài hiển thị cho học sinh (nội dung, ảnh, file); thời gian giao bài theo giờ Việt Nam; đăng nhập giáo viên bắt buộc Mã GV khớp tài khoản; tăng tốc GPU và canvas tự giữ 60 FPS.','Chia nhỏ chức năng: Trang chủ → Nhóm → Ô chức năng, mỗi ô ghi rõ làm được gì, dùng khi nào; có tìm nhanh và thanh quay lại.','Học liệu mới: giáo viên tải bài giảng, tiết dạy online, tác phẩm, video, hình ảnh cho học sinh tham khảo.','Bài nộp luôn khớp với tài khoản đang có; email/mật khẩu tạo theo tên (vd thanhdat@edu.vn, ThanhDat12B).','Trang chủ & intro nâng cấp: băng chuyền tính năng, thử thách Ngữ văn, thẻ biện pháp tu từ, cộng đồng, mục Minh bạch.','Hiệu ứng mới: đèn rọi theo chuột, nghiêng 3D, gợn sóng khi bấm, hiện dần khi cuộn, chuyển mục mượt.','Cloud nhanh hơn: bắt đầu đồng bộ ngay khi mở web, realtime chỉ tải đúng bảng thay đổi, thanh tiến trình đồng bộ.','Cổng học sinh mới: diễn đàn, hướng dẫn, tài liệu tham khảo, hỏi đáp.','Chế độ sáng/tối được thiết kế lại, dễ nhìn hơn.','Mục Đánh giá & báo lỗi dành cho mọi người dùng (có lọc từ ngữ).','Dữ liệu lấy từ Supabase làm gốc, đồng bộ thời gian thực; hiển thị giờ cập nhật gần nhất.','Hỗ trợ cài như ứng dụng, thông báo mất kết nối, tự báo khi có bản mới.','Giao bài: thêm Word/ảnh hiện thẳng vào đề, câu hỏi AI tự điền để chỉnh sửa.'].map(function(t){return '<div class="cm-rule"><span>✅</span><span>'+t+'</span></div>';}).join('')+
     '<p class="cm-meta" style="margin-top:12px">Phát triển cho Tổ Ngữ Văn — Trường THCS &amp; THPT Vĩnh Hòa. Góp ý: bấm nút ⭐.</p><button class="cm-go" style="margin-top:10px" onclick="openFeedback()">⭐ Gửi đánh giá</button></div></div>';
 }
 
@@ -3789,10 +3842,10 @@ function hvRenderMarquee(){const t=document.getElementById('hvTrack');if(!t)retu
             raf=0;const ev=last;const t=ev.target;if(!t||!t.closest)return;
             const card=t.closest('.glass-card,.cm-card,.feature-card-v2,.cm-acc');
             if(card){const r=card.getBoundingClientRect();card.style.setProperty('--mx',(ev.clientX-r.left)+'px');card.style.setProperty('--my',(ev.clientY-r.top)+'px');}
-            if(fine){const tl=t.closest('.feature-card-v2,.hv-trust-card');if(tl){const r=tl.getBoundingClientRect();const px=(ev.clientX-r.left)/r.width-.5,py=(ev.clientY-r.top)/r.height-.5;tl.style.transform='translateY(-8px) scale(1.02) perspective(900px) rotateX('+(-py*8).toFixed(2)+'deg) rotateY('+(px*10).toFixed(2)+'deg)';tl.__tilt=true;}}
+            if(fine){const tl=t.closest('.feature-card-v2,.hv-trust-card');if(tl){const r=tl.getBoundingClientRect();const px=(ev.clientX-r.left)/r.width-.5,py=(ev.clientY-r.top)/r.height-.5;tl.style.transform='translateY(-8px) scale(1.02) perspective(900px) rotateX('+(-py*8).toFixed(2)+'deg) rotateY('+(px*10).toFixed(2)+'deg)';hvTilted.add(tl);}}
         });
     },{passive:true});
-    document.addEventListener('pointerout',function(e){const t=e.target&&e.target.closest?e.target.closest('.feature-card-v2,.hv-trust-card'):null;if(t&&t.__tilt&&!t.contains(e.relatedTarget)){t.style.transform='';t.__tilt=false;}},true);
+    document.addEventListener('pointerout',function(e){const t=e.target&&e.target.closest?e.target.closest('.feature-card-v2,.hv-trust-card'):null;if(t&&hvTilted.has(t)&&!t.contains(e.relatedTarget)){t.style.transform='';hvTilted.delete(t);}},true);
     document.addEventListener('click',function(e){
         const b=e.target.closest&&e.target.closest('.btn-neon,.btn-ghost,.cm-go,.cm-btn,.cm-tab,.cm-chip,.hv-cm-btn');if(!b)return;
         const cs=getComputedStyle(b);if(cs.position==='static')b.style.position='relative';b.style.overflow='hidden';
@@ -3869,7 +3922,7 @@ function exportAccountsCSV(){
     const out=[['STT','Họ và tên','Mã HS','Lớp','Mã lớp','Email đăng nhập','Mật khẩu','Link đăng nhập']];
     rows.forEach(function(r,i){out.push([i+1,r.name,r.sid,r.cls,r.code,r.email,r.pass,r.link]);});
     const csv='\uFEFF'+out.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='HOCVAN_TAIKHOAN_'+hvSelectedClassName(cf)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();showToast('Đã xuất CSV!','success');
+    const a=document.createElement('a');a.href=hvObjUrl(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='HOCVAN_TAIKHOAN_'+hvSelectedClassName(cf)+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();showToast('Đã xuất CSV!','success');
 }
 function exportAccountsPrint(){
     const cf=document.getElementById('exportClassSelect')?.value||'ALL';const rows=hvAccRows(cf);
@@ -3938,7 +3991,7 @@ function hvSessionBlocked(){
     try{if(SupabaseDB.client)SupabaseDB.client.auth.signOut({scope:'local'});}catch(_){}
     try{const sh=document.getElementById('appShell');if(sh){sh.classList.add('hidden');sh.classList.remove('flex');}}catch(_){}
     try{showLanding();}catch(_){}
-    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:10080;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,17,23,.7);backdrop-filter:blur(8px)';
+    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:100066;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,17,23,.7);backdrop-filter:blur(8px)';
     o.innerHTML='<div style="max-width:420px;width:100%;background:#fff;color:#111;border-radius:24px;padding:26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45)"><div style="font-size:46px">🔒</div><h3 style="font-family:Outfit,sans-serif;font-weight:900;font-size:20px;margin:8px 0">Tài khoản đang được đăng nhập</h3><p style="font-size:13px;line-height:1.7;color:#555">Tài khoản'+(who?' <b>'+escapeHtml(who)+'</b>':'')+' hiện đang đăng nhập trên một thiết bị khác. Mỗi tài khoản chỉ dùng được trên <b>1 thiết bị</b> tại một thời điểm.<br><br>Hãy đăng xuất ở thiết bị đó rồi thử lại. Nếu vừa đóng trình duyệt, chờ khoảng 30 giây. Nếu không phải em đăng nhập, hãy báo giáo viên để đổi mật khẩu.</p><button style="margin-top:16px;padding:12px 26px;border:0;border-radius:14px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;font-weight:900;cursor:pointer" onclick="this.closest(\'div[style*=fixed]\').remove()">Đã hiểu</button></div>';
     document.body.appendChild(o);
 }
@@ -4221,6 +4274,7 @@ function hvRenderHub(id){
 }
 function hvShowHub(id){
     const r=hvOrigSwitch('hub');
+    try{hvTabLeave('hub');}catch(_){}
     window.__hvTab=id;hvRenderHub(id);hvHighlightHub(id);hvCrumbFor(id);
     try{document.querySelector('main').scrollTo({top:0,behavior:'smooth'});window.scrollTo({top:0,behavior:'smooth'});}catch(_){}
     return r;
@@ -4233,6 +4287,7 @@ let hvOrigSwitch=null;
         let r;
         try{r=_s.apply(this,arguments);}catch(e){console.error('switchTab',id,e);window.__hvLastErr='Mục '+id+': '+(e&&e.message?e.message:e);try{showToast('Mục này gặp lỗi nhỏ: '+(e&&e.message?e.message:e),'error');}catch(_){}}
         try{const h=hvFindHubOfTab(id);if(h){hvHighlightHub(h.id);hvCrumbFor(id);}else hvSetCrumb('');}catch(_){}
+        try{hvTabLeave(id);}catch(_){}
         return r;
     };
     const _n=setupNavigationByRole;
@@ -4285,7 +4340,7 @@ function hvFixAssignmentDeadlines(){
 async function hvSyncClock(){
     try{
         const c=SupabaseDB.client;if(!c||navigator.onLine===false)return;
-        const t0=Date.now();const r=await fetch((c.supabaseUrl||'')+'/rest/v1/',{method:'HEAD',headers:{apikey:c.supabaseKey||''},cache:'no-store'});const t1=Date.now();
+        const t0=Date.now();const r=await fetch((c.supabaseUrl||'')+'/rest/v1/',{method:'HEAD',headers:{apikey:c.supabaseKey||''},cache:'no-store',signal:(AbortSignal.timeout?AbortSignal.timeout(8000):undefined)});const t1=Date.now();
         const dh=r.headers.get('date');if(!dh)return;
         const off=new Date(dh).getTime()+(t1-t0)/2-t1;hvClockOffset=Math.abs(off)>2500?off:0;
     }catch(_){}
@@ -4305,7 +4360,7 @@ async function hvSyncClock(){
 /* ----- Đề bài hiển thị cho học sinh (nội dung, ảnh, file) ----- */
 function hvSafeSrc(u){u=String(u||'');return /^(data:(image|application|text)\/|https?:\/\/|blob:)/i.test(u)?u:'';}
 function hvLightbox(src){
-    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:10095;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out';
+    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:100065;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out';
     o.innerHTML='<img alt="Ảnh đề bài" style="max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)"><button style="position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer" aria-label="Đóng">✕</button>';
     o.querySelector('img').src=src;const close=function(){o.remove();document.removeEventListener('keydown',esc);};const esc=function(e){if(e.key==='Escape')close();};
     o.addEventListener('click',close);document.addEventListener('keydown',esc);document.body.appendChild(o);
@@ -4315,7 +4370,7 @@ function hvAsgBrief(a,opts){
     const E=escapeHtml;const atts=(a.attachments||[]).filter(function(x){return hvSafeSrc(x.dataUrl||x.url);});
     const imgs=atts.filter(function(x){return /^image\//.test(x.type||'');});const files=atts.filter(function(x){return imgs.indexOf(x)===-1;});
     const ts=hvParseDate(a.createdAt);
-    let h='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px" class="text-ink-500"><span><i class="fa-solid fa-paper-plane text-blue-500"></i> Giao lúc <b>'+E(formatCreated(a.createdAt))+'</b> <span class="hv-ago" data-ts="'+(isNaN(ts)?'':ts)+'">('+E(hvAgo(a.createdAt))+')</span></span><span><i class="fa-solid fa-calendar-day text-red-500"></i> Hạn <b>'+E(formatDeadline(a.deadline))+'</b></span><span><i class="fa-solid fa-hourglass-half text-amber-500"></i> '+E(formatCountdown(a.deadline))+'</span></div>';
+    let h='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px" class="text-ink-500"><span><i class="fa-solid fa-paper-plane text-blue-500"></i> Giao lúc <b>'+E(formatCreated(a.createdAt))+'</b> <span class="hv-ago" data-ts="'+(isNaN(ts)?'':ts)+'">('+E(hvAgo(a.createdAt))+')</span></span><span><i class="fa-solid fa-calendar-day text-red-500"></i> Hạn <b>'+E(formatDeadline(a.deadline))+'</b></span><span><i class="fa-solid fa-hourglass-half text-amber-500"></i> '+E(formatCountdown(a.deadline))+'</span>'+(a.timeLimit>0?'<span><i class="fa-regular fa-clock text-emerald-600"></i> Giới hạn <b>'+a.timeLimit+' phút</b></span>':'')+'</div>';
     if(a.description)h+='<div class="ex-body">'+hvFormatExamHtml(a.description)+'</div>';
     if(a.readingPassage)h+='<details style="margin-top:12px"'+((opts&&opts.open)?' open':'')+'><summary style="cursor:pointer;font-weight:800;font-size:13px">📖 Ngữ liệu đọc hiểu</summary><div class="ex-body">'+hvFormatExamHtml(a.readingPassage)+'</div></details>';
     if(imgs.length)h+='<div class="mat-imgs">'+imgs.map(function(x){return '<img src="'+E(x.dataUrl||x.url)+'" alt="'+E(x.name||'Ảnh đề')+'" loading="lazy" onclick="hvLightbox(this.src)">';}).join('')+'</div>';
@@ -4341,7 +4396,7 @@ function hvOpenAssignmentView(id){
 function hvCloseAssignmentView(){const m=document.getElementById('hvAsgView');if(m)m.style.display='none';}
 function hvAsgBadges(a){
     const n=hvAsgAttCount(a);
-    return '<button type="button" onclick="hvOpenAssignmentView(\''+escapeHtml(a.id)+'\')" class="btn-ghost text-[11px] font-bold px-3 py-1.5 rounded-lg mt-2"><i class="fa-solid fa-eye mr-1"></i>Xem đề'+(n?' · '+n+' file/ảnh':'')+(a.description?' · có nội dung':'')+'</button>';
+    return '<button type="button" onclick="hvOpenAssignmentView(\''+escapeHtml(a.id)+'\')" class="btn-ghost text-[11px] font-bold px-3 py-1.5 rounded-lg mt-2"><i class="fa-solid fa-eye mr-1"></i>Xem đề'+(n?' · '+n+' file/ảnh':'')+(a.description?' · có nội dung':'')+hvAttemptBadge(a)+'</button>';
 }
 (function(){
     const _st=startSubmitFromAssignment;startSubmitFromAssignment=function(id){const r=_st.apply(this,arguments);try{hvRenderAssignmentBrief(id);}catch(e){console.warn(e);}return r;};
@@ -4359,8 +4414,8 @@ hvHubQuery=hvDebounce(hvHubQuery,90);
 
 /* ----- Canvas nền tối ưu: delta-time, gom nét vẽ, tự giảm tải để giữ 60 FPS+, tạm dừng khi ẩn tab ----- */
 function hvPerfTier(){const c=navigator.hardwareConcurrency||4,m=navigator.deviceMemory||4;return (c<=4||m<=2)?1:2;}
-function initBgCanvas(){
-    const canvas=document.getElementById('bgCanvas');if(!canvas)return;
+function initBgCanvasMain(canvasArg){
+    const canvas=canvasArg||document.getElementById('bgCanvas');if(!canvas)return;
     const ctx=canvas.getContext('2d',{alpha:true,desynchronized:true})||canvas.getContext('2d');
     const fine=window.matchMedia&&matchMedia('(pointer:fine)').matches;const dpr=fine?Math.min(window.devicePixelRatio||1,1.5):1;
     let w=0,h=0;
@@ -4430,7 +4485,7 @@ function initIntroCanvas(){
 (function(){
     if(/[?&]fps(=|&|$)/.test(location.search)){
         const d=document.createElement('div');d.style.cssText='position:fixed;left:8px;bottom:8px;z-index:10090;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.72);color:#34d399;font:700 12px monospace;pointer-events:none';document.body.appendChild(d);
-        let f=0,t=performance.now();const tick=function(now){f++;if(now-t>=500){d.textContent=Math.round(f*1000/(now-t))+' FPS · '+(window.__hvCanvasN?window.__hvCanvasN():0)+' hạt nền';f=0;t=now;}requestAnimationFrame(tick);};requestAnimationFrame(tick);
+        let f=0,t=performance.now();const tick=function(now){f++;if(now-t>=500){d.textContent=Math.round(f*1000/(now-t))+' FPS · '+(window.__hvCanvasN?window.__hvCanvasN():0)+' hạt nền · long-task '+window.__hvPerf.lt+' (max '+window.__hvPerf.maxLt+'ms) · INP~'+window.__hvPerf.inp+'ms';f=0;t=now;}requestAnimationFrame(tick);};requestAnimationFrame(tick);
     }
 })();
 
@@ -4625,14 +4680,14 @@ function hvWLBack(){
 }
 function hvWLRow(final){
     const now=hvNow();const open=HV_WL.since;
-    const d={aid:HV_WL.aid,title:HV_WL.title,sid:(currentUser&&currentUser.studentId)||'',name:currentUser?currentUser.name:'',cls:currentClassIdForUser||'',ses:HV_WL.sid,leaves:HV_WL.leaves+(open?1:0),away:HV_WL.away+(open?now-open:0),open:!!open,events:HV_WL.events.slice(HV_WL.sent),len:hvDraftText().length,start:HV_WL.start,ts:now,fin:!!final};
+    const d={aid:HV_WL.aid,title:HV_WL.title,sid:(currentUser&&currentUser.studentId)||'',name:currentUser?currentUser.name:'',cls:currentClassIdForUser||'',ses:HV_WL.sid,leaves:HV_WL.leaves+(open?1:0),away:HV_WL.away+(open?now-open:0),open:!!open,events:HV_WL.events.slice(HV_WL.sent),len:hvDraftText().length,start:HV_WL.start,ts:now,fin:!!final,lim:(hvAttemptGet(HV_WL.aid)||{}).lim||0,to:!!window.__hvForceSubmit};
     HV_WL.sent=HV_WL.events.length;return {id:'wl_'+HV_WL.sid+'_'+(HV_WL.seq++),data:d};
 }
 async function hvWLSend(rows){
     const c=SupabaseDB.client;const all=hvWLQueue().concat(rows).slice(-30);
     if(!c||!SupabaseDB.online||navigator.onLine===false){hvWLSetQueue(all);return;}
     try{
-        const r=await fetch((c.supabaseUrl||'')+'/rest/v1/work_logs',{method:'POST',keepalive:true,headers:{apikey:c.supabaseKey||'',Authorization:'Bearer '+(c.supabaseKey||''),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(all.map(function(x){return {id:x.id,data:x.data};}))});
+        const r=await fetch((c.supabaseUrl||'')+'/rest/v1/work_logs',{method:'POST',keepalive:true,signal:(AbortSignal.timeout?AbortSignal.timeout(10000):undefined),headers:{apikey:c.supabaseKey||'',Authorization:'Bearer '+(c.supabaseKey||''),'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(all.map(function(x){return {id:x.id,data:x.data};}))});
         if(r.ok||[400,401,403,404,409].indexOf(r.status)!==-1)hvWLSetQueue([]);else hvWLSetQueue(all);
     }catch(e){hvWLSetQueue(all);}
 }
@@ -4672,7 +4727,7 @@ async function renderWorkLog(force){
 async function hvWLLoad(aid){
     wlAid=aid;const c=SupabaseDB.client;
     if(!c){wlRows=[];return;}
-    try{const r=await c.from('work_logs').select('id,data').eq('data->>aid',aid).limit(3000);
+    try{const qq=c.from('work_logs').select('id,data').eq('data->>aid',aid).limit(3000);const r=await ((typeof AbortSignal!=='undefined'&&AbortSignal.timeout)?qq.abortSignal(AbortSignal.timeout(15000)):qq);
         if(r.error){wlRows=[];window.__wlErr=r.error.message;return;}
         window.__wlErr='';wlRows=(r.data||[]).map(function(x){return x.data;}).filter(Boolean);
     }catch(e){wlRows=[];window.__wlErr=String(e&&e.message||e);}
@@ -4684,7 +4739,7 @@ function hvWLAggregate(){
         const s=o.ses[d.ses]=o.ses[d.ses]||{leaves:0,away:0,ts:0,open:false};
         if(d.ts>=s.ts){s.leaves=d.leaves;s.away=d.away;s.ts=d.ts;s.open=d.open;}
         (d.events||[]).forEach(function(ev){o.events.push(ev);});
-        if(d.ts>=o.ts){o.ts=d.ts;o.len=d.len;}if(d.start<o.start)o.start=d.start;if(d.fin)o.fin=true;
+        if(d.ts>=o.ts){o.ts=d.ts;o.len=d.len;}if(d.start<o.start)o.start=d.start;if(d.fin)o.fin=true;if(d.lim)o.lim=d.lim;if(d.to)o.to=true;
     });
     return Object.keys(by).map(function(k){
         const o=by[k];const ses=Object.keys(o.ses).map(function(x){return o.ses[x];});
@@ -4725,7 +4780,7 @@ function hvWLDetail(sid){
     let m=document.getElementById('hvWLView');
     if(!m){m=document.createElement('div');m.id='hvWLView';m.className='mat-modal';m.onclick=function(e){if(e.target===m)m.style.display='none';};m.innerHTML='<div class="mat-box"><div id="hvWLViewBody"></div></div>';document.body.appendChild(m);}
     const E=escapeHtml;const lab={start:'🚀 Bắt đầu làm bài',hide:'🚪 Rời màn hình / chuyển tab',blur:'🪟 Chuyển sang cửa sổ khác',back:'↩️ Quay lại màn hình',close:'❌ Đóng trang'};
-    document.getElementById('hvWLViewBody').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-family:Outfit,sans-serif;font-weight:900;font-size:19px">🕒 Nhật ký: '+E(ag.name)+'</h3><button onclick="document.getElementById(\'hvWLView\').style.display=\'none\'" style="background:none;border:0;font-size:18px;cursor:pointer;color:inherit"><i class="fa-solid fa-xmark"></i></button></div><p class="text-xs text-ink-500" style="margin:6px 0 10px">Thoát <b>'+ag.leaves+'</b> lần · tổng <b>'+hvFmtDur(ag.away)+'</b> ngoài màn hình · đã viết '+ag.len+' ký tự</p>'+ag.events.map(function(e){return '<div class="wl-tl"><span class="tm">'+E(hvFmtClock(e.t))+'</span><span>'+(lab[e.k]||E(e.k))+(e.k==='back'?' <b>(vắng '+hvFmtDur(e.d||0)+')</b>':'')+'</span></div>';}).join('');
+    document.getElementById('hvWLViewBody').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-family:Outfit,sans-serif;font-weight:900;font-size:19px">🕒 Nhật ký: '+E(ag.name)+'</h3><button onclick="document.getElementById(\'hvWLView\').style.display=\'none\'" style="background:none;border:0;font-size:18px;cursor:pointer;color:inherit"><i class="fa-solid fa-xmark"></i></button></div><p class="text-xs text-ink-500" style="margin:6px 0 10px">Thoát <b>'+ag.leaves+'</b> lần · tổng <b>'+hvFmtDur(ag.away)+'</b> ngoài màn hình · đã viết '+ag.len+' ký tự'+(ag.lim?' · giới hạn <b>'+ag.lim+' phút</b>'+(ag.to?' · <b style="color:#dc2626">hết giờ, hệ thống tự nộp</b>':''):'')+'</p>'+ag.events.map(function(e){return '<div class="wl-tl"><span class="tm">'+E(hvFmtClock(e.t))+'</span><span>'+(lab[e.k]||E(e.k))+(e.k==='back'?' <b>(vắng '+hvFmtDur(e.d||0)+')</b>':'')+'</span></div>';}).join('');
     m.style.display='flex';
 }
 function hvWLExport(){
@@ -4759,7 +4814,8 @@ function hvEnhanceIntro(){
         requestAnimationFrame(step);
     }
     let raf=0,px=0,py=0;
-    sp.addEventListener('pointermove',function(e){px=(e.clientX/window.innerWidth-.5)*2;py=(e.clientY/window.innerHeight-.5)*2;if(raf)return;raf=requestAnimationFrame(function(){raf=0;sp.style.setProperty('--px',px.toFixed(3));sp.style.setProperty('--py',py.toFixed(3));});},{passive:true});
+    window.__hvIntroAC=new AbortController();
+    sp.addEventListener('pointermove',function(e){px=(e.clientX/window.innerWidth-.5)*2;py=(e.clientY/window.innerHeight-.5)*2;if(raf)return;raf=requestAnimationFrame(function(){raf=0;sp.style.setProperty('--px',px.toFixed(3));sp.style.setProperty('--py',py.toFixed(3));});},{passive:true,signal:window.__hvIntroAC.signal});
     setTimeout(function(){
         if(sp.classList.contains('hide'))return;const em=['✨','⭐','📖','✍️','💡','🌟'];const cx=window.innerWidth/2,cy=window.innerHeight/2-40;
         for(let i=0;i<22;i++){const p=document.createElement('span');p.className='intro-spark';p.textContent=em[i%em.length];p.style.left=cx+'px';p.style.top=cy+'px';const a=Math.random()*Math.PI*2,dist=90+Math.random()*150;p.style.setProperty('--dx',Math.cos(a)*dist+'px');p.style.setProperty('--dy',Math.sin(a)*dist+'px');p.style.setProperty('--rot',(Math.random()*240-120)+'deg');document.body.appendChild(p);setTimeout(function(){p.remove();},1300);}
@@ -4770,12 +4826,332 @@ function hvHideIntroWhenReady(min,max){
     const tick=function(){
         const sp=document.getElementById('introSplash');if(!sp||sp.classList.contains('hide'))return;
         const el=performance.now()-t0;const booting=SupabaseDB._bootP&&!window.__hvBootDone;
-        if(el>=min&&(!booting||el>=max)){sp.classList.add('hide');return;}
+        if(el>=min&&(!booting||el>=max)){sp.classList.add('hide');try{window.__hvIntroAC&&window.__hvIntroAC.abort();}catch(_){}setTimeout(function(){const ic=document.getElementById('introCanvas');if(ic){ic.width=1;ic.height=1;}},1400);return;}
         setTimeout(tick,120);
     };
     setTimeout(tick,min);
 }
 (function(){const _ri=runIntroAnimation;runIntroAnimation=function(){const r=_ri.apply(this,arguments);try{hvEnhanceIntro();}catch(e){console.warn('intro',e);}return r;};})();
+
+/* =====================================================================
+   v4.9 · CHẾ ĐỘ TẬP TRUNG · ĐỒNG HỒ LÀM BÀI · TỐI ƯU HIỆU NĂNG NÂNG CAO
+   ===================================================================== */
+/* ----- Tiện ích hiệu năng ----- */
+function hvIdle(fn,timeout){if('requestIdleCallback' in window)return requestIdleCallback(fn,{timeout:timeout||1500});return setTimeout(fn,60);}
+function hvYield(){if(window.scheduler&&scheduler.yield)return scheduler.yield();if(window.scheduler&&scheduler.postTask)return scheduler.postTask(function(){},{priority:'user-visible'});return new Promise(function(r){setTimeout(r,0);});}
+function hvMemo(fn,max){const m=new Map();return function(k){if(m.has(k)){const v=m.get(k);m.delete(k);m.set(k,v);return v;}const v=fn.apply(this,arguments);m.set(k,v);if(m.size>(max||50))m.delete(m.keys().next().value);return v;};}
+const hvABT_ORIG=hvAutoBreakText;
+hvFormatExamHtml=hvMemo(hvFormatExamHtml,40);
+hvAutoBreakText=hvMemo(hvAutoBreakText,40);
+hvParts=hvMemo(hvParts,400);
+const hvTilted=new WeakSet();
+const hvBlobUrls=new Set();
+function hvObjUrl(blob){const u=URL.createObjectURL(blob);hvBlobUrls.add(u);setTimeout(function(){URL.revokeObjectURL(u);hvBlobUrls.delete(u);},60000);return u;}
+
+/* ----- Thư viện nặng nạp theo nhu cầu (xlsx, mermaid, html2pdf) ----- */
+const HV_LIBS={xlsx:['XLSX','https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'],mermaid:['mermaid','https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'],html2pdf:['html2pdf','https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js']};
+const HV_LOADING={};
+function hvEnsure(name){
+    const L=HV_LIBS[name];if(!L)return Promise.resolve();if(window[L[0]])return Promise.resolve();if(HV_LOADING[name])return HV_LOADING[name];
+    return HV_LOADING[name]=new Promise(function(res,rej){const s=document.createElement('script');s.src=L[1];s.async=true;s.crossOrigin='anonymous';
+        s.onload=function(){if(name==='mermaid'){try{window.mermaid.initialize({startOnLoad:false,theme:'neutral',securityLevel:'loose'});}catch(_){}}res();};
+        s.onerror=function(){delete HV_LOADING[name];try{showToast('Không tải được thư viện '+name+' — kiểm tra mạng','error');}catch(_){}rej(new Error('lib '+name));};
+        document.head.appendChild(s);});
+}
+function hvLazyWrap(names,lib){names.forEach(function(n){const f=window[n];if(typeof f!=='function')return;window[n]=function(){const self=this,args=arguments;return hvEnsure(lib).then(function(){return f.apply(self,args);},function(){});};});}
+hvLazyWrap(['handleFileSelect', 'exportDataToCSV', 'exportAccountsExcel', 'hvWLExport'],'xlsx');
+hvLazyWrap(['renderMindmap'],'mermaid');
+hvLazyWrap(['exportKHBD', 'exportHocBaPDF'],'html2pdf');
+
+/* ----- Đồng hồ giới hạn thời gian làm bài (như Azota) ----- */
+const HV_T={aid:null,iv:null,warned:{},fired:null};
+function hvAttemptKey(aid){const u=currentUser;return u?'hv_attempt_v1:'+(u.studentId||u.name||'u')+':'+aid:null;}
+function hvAttemptGet(aid){try{return JSON.parse(localStorage.getItem(hvAttemptKey(aid))||'null');}catch(_){return null;}}
+function hvAttemptSet(aid,o){try{localStorage.setItem(hvAttemptKey(aid),JSON.stringify(o));}catch(_){}}
+function hvAttemptDel(aid){try{localStorage.removeItem(hvAttemptKey(aid));}catch(_){}}
+function hvRemainMs(at){return at.s+at.lim*60000-hvNow();}
+function hvFmtTimer(ms){ms=Math.max(0,ms);const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(ss).padStart(2,'0');}
+function hvTimerStart(aid){if(HV_T.aid===aid&&HV_T.iv)return;HV_T.aid=aid;clearInterval(HV_T.iv);HV_T.iv=setInterval(hvTimerTick,500);hvTimerTick();}
+function hvTimerStop(){clearInterval(HV_T.iv);HV_T.iv=null;HV_T.aid=null;const t=document.getElementById('hvFocusTimer');if(t)t.classList.add('hidden');}
+function hvTimerTick(){
+    if(!HV_T.aid)return;const at=hvAttemptGet(HV_T.aid);const box=document.getElementById('hvFocusTimer'),tx=document.getElementById('hvFocusTime');
+    if(!at){hvTimerStop();return;}
+    const rem=hvRemainMs(at);
+    if(box&&tx){box.classList.remove('hidden');tx.textContent=hvFmtTimer(rem);box.classList.toggle('warn',rem<=300000&&rem>60000);box.classList.toggle('crit',rem<=60000);}
+    if(rem<=300000&&rem>299000&&!HV_T.warned[HV_T.aid+'5']){HV_T.warned[HV_T.aid+'5']=1;showToast('⏰ Còn 5 phút!','info');}
+    if(rem<=60000&&rem>59000&&!HV_T.warned[HV_T.aid+'1']){HV_T.warned[HV_T.aid+'1']=1;showToast('⚠️ Còn 1 phút — hãy hoàn thành bài!','error');}
+    if(rem<=0)hvTimeUp(HV_T.aid);
+}
+function hvStartDialog(a,onOk){
+    const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:100060;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,17,23,.7);backdrop-filter:blur(8px)';
+    o.innerHTML='<div class="mat-box" style="max-width:440px;text-align:center"><div style="font-size:46px">⏱</div><h3 style="font-family:Outfit,sans-serif;font-weight:900;font-size:21px;margin:6px 0">Bắt đầu làm bài?</h3><p style="font-size:13.5px;line-height:1.75;color:var(--text-sub)">Bài “<b>'+escapeHtml(a.title||'')+'</b>” giới hạn <b style="color:#dc2626">'+a.timeLimit+' phút</b>.<br>Đồng hồ bắt đầu chạy ngay khi em bấm <b>Bắt đầu</b> và <b>không dừng</b> dù em thoát ra. Hết giờ hệ thống tự nộp phần em đã viết.</p><div style="display:flex;gap:10px;justify-content:center;margin-top:18px"><button class="cm-btn" data-x="no">Để sau</button><button class="cm-go" data-x="ok">▶ Bắt đầu làm bài</button></div></div>';
+    o.addEventListener('click',function(e){const x=e.target.closest&&e.target.closest('[data-x]');if(!x&&e.target!==o)return;o.remove();if(x&&x.dataset.x==='ok')onOk();});
+    document.body.appendChild(o);
+}
+let hvStartOrig=null;
+(function(){
+    const _st=startSubmitFromAssignment;hvStartOrig=_st;
+    startSubmitFromAssignment=function(id){
+        const a=assignmentsData.find(function(x){return x.id===id;});const self=this,args=arguments;
+        if(a&&a.timeLimit>0&&typeof isStudentRole==='function'&&isStudentRole()){
+            const at=hvAttemptGet(id);
+            if(at){if(hvRemainMs(at)<=0){hvTimeUp(id);return;}hvTimerStart(id);return _st.apply(self,args);}
+            hvStartDialog(a,function(){hvAttemptSet(id,{s:hvNow(),lim:a.timeLimit});hvTimerStart(id);_st.apply(self,args);});return;
+        }
+        return _st.apply(this,arguments);
+    };
+})();
+async function hvTimeUp(aid){
+    if(HV_T.fired===aid)return;HV_T.fired=aid;setTimeout(function(){if(HV_T.fired===aid)HV_T.fired=null;},30000);
+    const done=function(){return submissionsData.some(function(s){return s.assignmentId===aid&&s.studentName===currentUser.name;});};
+    if(done()){hvAttemptDel(aid);hvTimerStop();return;}
+    const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:100070;display:flex;align-items:center;justify-content:center;background:rgba(15,17,23,.82);backdrop-filter:blur(10px);color:#fff;text-align:center;padding:20px';
+    ov.innerHTML='<div><div style="font-size:64px">⏰</div><h2 style="font-family:Outfit,sans-serif;font-weight:900;font-size:28px;margin:8px 0">Hết giờ làm bài!</h2><p style="opacity:.85">Đang nộp phần em đã viết…</p></div>';document.body.appendChild(ov);
+    try{
+        if(currentAssignmentContext!==aid)hvStartOrig(aid);
+        await new Promise(function(r){setTimeout(r,500);});
+        const content=hvDraftText();
+        if(!content.trim()&&!(typeof pendingAttachments!=='undefined'&&pendingAttachments.length)){showToast('Hết giờ — em chưa viết nội dung nên bài chưa được nộp.','error');}
+        else{window.__hvForceSubmit=true;try{await hvSubmitFromBar();}finally{window.__hvForceSubmit=false;}}
+        if(done()){hvAttemptDel(aid);showToast('Đã tự nộp bài khi hết giờ ✅','success');}
+        else{showToast('Chưa nộp được — bài vẫn được lưu nháp, hãy kiểm tra mạng','error');}
+    }catch(e){console.warn('timeup',e);}
+    ov.remove();hvTimerStop();hvFocusExit(true);
+}
+function hvAttemptBadge(a){
+    if(!a||!(a.timeLimit>0))return '';const at=hvAttemptGet(a.id);
+    return ' · ⏱ '+(at?(hvRemainMs(at)>0?'còn '+hvFmtTimer(hvRemainMs(at)):'hết giờ'):a.timeLimit+' phút');
+}
+function hvAttemptScan(){
+    try{
+        if(!currentUser||typeof isStudentRole!=='function'||!isStudentRole()||document.hidden)return;
+        const pre='hv_attempt_v1:'+(currentUser.studentId||currentUser.name||'u')+':';
+        for(let i=localStorage.length-1;i>=0;i--){
+            const k=localStorage.key(i);if(!k||k.indexOf(pre)!==0)continue;const aid=k.slice(pre.length);let at=null;try{at=JSON.parse(localStorage.getItem(k)||'null');}catch(_){}
+            if(!at){localStorage.removeItem(k);continue;}
+            if(submissionsData.some(function(s){return s.assignmentId===aid&&s.studentName===currentUser.name;})){localStorage.removeItem(k);continue;}
+            if(hvRemainMs(at)<=0)hvTimeUp(aid);else if(!HV_T.aid)hvTimerStart(aid);
+        }
+    }catch(_){}
+}
+setInterval(function(){hvAttemptScan();if(currentUser&&typeof isTeacherRole==='function'&&isTeacherRole()&&!window.XLSX&&!HV_LOADING.xlsx&&Date.now()-hvBoot>8000)hvEnsure('xlsx').catch(function(){});},20000);
+const hvBoot=Date.now();
+setTimeout(hvAttemptScan,2500);
+
+/* ----- Chế độ tập trung: chỉ chừa mũi tên thoát + Gửi bài ----- */
+let hvFocusAC=null,hvIgnorePop=false;
+function hvFocusFill(a){
+    const t=document.getElementById('hvFocusTitle');if(t)t.textContent=a.title||'Bài làm';
+    if(a.timeLimit>0&&hvAttemptGet(a.id))hvTimerStart(a.id);else{const b=document.getElementById('hvFocusTimer');if(b)b.classList.add('hidden');}
+    hvFocusUpdate();
+}
+function hvFocusUpdate(){
+    const st=document.getElementById('hvFocusStat');if(!st)return;const t=hvDraftText();const w=t.trim()?t.trim().split(/\s+/).length:0;
+    const sv=HV_DRAFT.saved?(' · 💾 '+hvParts(HV_DRAFT.saved).hour+':'+hvParts(HV_DRAFT.saved).minute):'';
+    const txt=w+' từ'+sv;if(st.textContent!==txt)st.textContent=txt;
+    const at=document.getElementById('hvFocusAtt');if(at)at.textContent=(typeof pendingAttachments!=='undefined'&&pendingAttachments.length)?pendingAttachments.length:'';
+}
+function hvFocusEnter(a){
+    if(!document.body.classList.contains('hv-focus')){
+        document.body.classList.add('hv-focus');hvFocusAC=new AbortController();const sig=hvFocusAC.signal;
+        try{history.pushState({hvFocus:1},'');}catch(_){}
+        window.addEventListener('popstate',function(){if(hvIgnorePop){hvIgnorePop=false;return;}hvFocusExit(true,true);},{signal:sig});
+        if(window.visualViewport)window.visualViewport.addEventListener('resize',function(){hvFitWork();},{signal:sig});
+    }
+    hvFocusFill(a);
+}
+function hvFocusExit(navigate,fromPop){
+    if(!document.body.classList.contains('hv-focus'))return;
+    document.body.classList.remove('hv-focus');
+    if(hvFocusAC){hvFocusAC.abort();hvFocusAC=null;}
+    if(!fromPop&&history.state&&history.state.hvFocus){hvIgnorePop=true;try{history.back();}catch(_){hvIgnorePop=false;}}
+    if(navigate){try{cancelAssignmentContext();}catch(_){}try{switchTab('assignments');}catch(_){}}
+}
+(function(){
+    const _hs=hvSetupWorkspace;
+    hvSetupWorkspace=function(){
+        _hs.apply(this,arguments);
+        try{
+            const a=(typeof isStudentRole==='function'&&isStudentRole()&&currentAssignmentContext)?assignmentsData.find(function(x){return x.id===currentAssignmentContext;}):null;
+            if(a)hvFocusEnter(a);else hvFocusExit(false);
+        }catch(e){console.warn('focus',e);}
+    };
+    const _ub=hvUpdateBar;hvUpdateBar=function(){_ub.apply(this,arguments);try{if(document.body.classList.contains('hv-focus'))hvFocusUpdate();}catch(_){}};
+    const _sb=hvSubmitFromBar;
+    hvSubmitFromBar=async function(){const b=document.getElementById('hvFocusSubmit');if(b)b.disabled=true;try{return await _sb.apply(this,arguments);}finally{if(b)b.disabled=false;try{if(!document.getElementById('splitView').classList.contains('hidden')&&submissionsData.some(function(s){return s.assignmentId===currentAssignmentContext&&s.studentName===currentUser.name;}))hvFocusExit(false);}catch(_){}}};
+    const _fw=hvFitWork;hvFitWork=hvRafThrottle(_fw);
+    try{if(window.ResizeObserver){const bar=document.getElementById('hvWorkBar');if(bar)new ResizeObserver(function(){hvFitWork();}).observe(bar);}}catch(_){}
+})();
+
+/* ----- Dọn bộ nhớ khi rời mục ----- */
+let hvPrevTab=null;
+function hvClr(id){const e=document.getElementById(id);if(e)e.innerHTML='';}
+function hvTabLeave(next){
+    const prev=hvPrevTab;hvPrevTab=next;if(prev===next)return;
+    if(next!=='submit')hvFocusExit(false);
+    if(prev==='worklog'){clearInterval(wlTimer);wlRows=[];wlAgg=[];hvClr('wlTable');hvClr('wlSummary');}
+    else if(prev==='materials'){hvClr('matGrid');}
+    else if(prev==='feedback'){hvClr('fbList');hvClr('fbModList');}
+    else if(prev==='hub'){hvClr('hvTiles');}
+}
+
+/* ----- IndexedDB (nén gzip) cho dữ liệu lớn: dự phòng khi localStorage đầy / ngoại tuyến ----- */
+const hvIdb={db:null,
+    open(){return this.db||(this.db=new Promise(function(res,rej){const r=indexedDB.open('hv-cache',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv');};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}));},
+    async get(k){const db=await this.open();return new Promise(function(res,rej){const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=function(){res(q.result);};q.onerror=function(){rej(q.error);};});},
+    async setMany(o){const db=await this.open();return new Promise(function(res,rej){const tx=db.transaction('kv','readwrite'),st=tx.objectStore('kv');Object.keys(o).forEach(function(k){st.put(o[k],k);});tx.oncomplete=function(){res();};tx.onerror=function(){rej(tx.error);};});}
+};
+async function hvPack(str){if(str.length<40000||typeof CompressionStream==='undefined')return {z:0,s:str};const cs=new CompressionStream('gzip');const w=cs.writable.getWriter();w.write(new TextEncoder().encode(str));w.close();return {z:1,b:await new Response(cs.readable).arrayBuffer()};}
+async function hvUnpack(o){if(!o)return null;if(!o.z)return o.s;const ds=new DecompressionStream('gzip');const w=ds.writable.getWriter();w.write(new Uint8Array(o.b));w.close();return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());}
+async function hvIdbSave(){
+    try{const map={students:studentsData,submissions:submissionsData,assignments:assignmentsData,classes:classesData,khbd:khbdList,gradeHistory:gradeHistoryData,materials:materialsData};const out={};
+        for(const k of Object.keys(map)){out[k]=await hvPack(JSON.stringify(map[k]));await hvYield();}
+        await hvIdb.setMany(out);}catch(_){}
+}
+async function hvIdbHydrate(){
+    try{const set={students:function(v){studentsData=v;},submissions:function(v){submissionsData=v;},assignments:function(v){assignmentsData=v;},classes:function(v){classesData=v;},khbd:function(v){khbdList=v;},gradeHistory:function(v){gradeHistoryData=v;},materials:function(v){materialsData=v;}};
+        const cur={students:studentsData,submissions:submissionsData,assignments:assignmentsData,classes:classesData,khbd:khbdList,gradeHistory:gradeHistoryData,materials:materialsData};
+        for(const k of Object.keys(set)){if(cur[k]&&cur[k].length)continue;const s=await hvUnpack(await hvIdb.get(k));if(!s)continue;const v=JSON.parse(s);if(Array.isArray(v)&&v.length)set[k](v);}
+        try{hvFixAssignmentDeadlines();}catch(_){}
+    }catch(_){}
+}
+(function(){const _sld=saveLocalData;const soon=hvDebounce(function(){hvIdle(hvIdbSave,5000);},3000);saveLocalData=function(){_sld.apply(this,arguments);soon();};})();
+
+/* ----- Dọn dữ liệu cũ + theo dõi dung lượng (StorageManager) ----- */
+function hvStoragePrune(){
+    try{
+        const now=Date.now();
+        for(let i=localStorage.length-1;i>=0;i--){
+            const k=localStorage.key(i);if(!k)continue;
+            if(k.indexOf('hv_draft_v1:')===0){let d=null;try{d=JSON.parse(localStorage.getItem(k)||'null');}catch(_){}if(!d||!d.c||now-(d.ts||0)>30*864e5)localStorage.removeItem(k);}
+            else if(k.indexOf('hv_attempt_v1:')===0){let d=null;try{d=JSON.parse(localStorage.getItem(k)||'null');}catch(_){}if(!d||now-(d.s||0)>3*864e5)localStorage.removeItem(k);}
+        }
+        if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(function(e){window.__hvStorage=e;if(e.quota&&e.usage/e.quota>0.8){try{localStorage.removeItem('hv_cm_cache');}catch(_){}}}).catch(function(){});
+        if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});
+    }catch(_){}
+}
+setTimeout(function(){hvIdle(hvStoragePrune,5000);},6000);
+
+/* ----- Vòng đời trang, mạng, đo hiệu năng ----- */
+document.addEventListener('freeze',function(){try{hvDraftSave();if(HV_WL.aid)hvWLFlush(true);}catch(_){}});
+document.addEventListener('resume',function(){try{SupabaseDB.syncFromCloud();SupabaseDB.startRealtime();}catch(_){}});
+function hvLiteCheck(){const c=navigator.connection;const lite=!!(c&&(c.saveData||/(^|-)2g$/.test(c.effectiveType||'')));document.documentElement.classList.toggle('hv-lite',lite);}
+hvLiteCheck();if(navigator.connection&&navigator.connection.addEventListener)navigator.connection.addEventListener('change',hvLiteCheck);
+window.__hvPerf={lt:0,maxLt:0,inp:0};
+try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){window.__hvPerf.lt++;if(e.duration>window.__hvPerf.maxLt)window.__hvPerf.maxLt=Math.round(e.duration);});}).observe({type:'longtask',buffered:true});}catch(_){}
+try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){if(e.interactionId&&e.duration>window.__hvPerf.inp)window.__hvPerf.inp=Math.round(e.duration);});}).observe({type:'event',durationThreshold:40,buffered:true});}catch(_){}
+setTimeout(function(){hvIdle(function(){try{if(document.fonts&&document.fonts.load){document.fonts.load('900 1em Outfit');document.fonts.load('italic 1em Lora');}}catch(_){}},3000);},2500);
+/* gợi ý tải trước khi rê chuột lên ô chức năng */
+const hvPref={t:{}};
+document.addEventListener('pointerover',function(e){
+    const el=e.target.closest&&e.target.closest('.hv-tile,.hv-pill');if(!el||el.__hvp)return;const m=(el.getAttribute('onclick')||'').match(/switchTab\('([\w-]+)'\)/);if(!m)return;el.__hvp=1;const id=m[1];
+    const lib={import:'xlsx',mindmap:'mermaid',hocba:'html2pdf',khbd:'html2pdf'}[id];if(lib)hvEnsure(lib).catch(function(){});
+    const tb={submissions:'submissions',materials:'materials',discussion:'discussions',assignments:'assignments'}[id];
+    if(tb&&currentUser&&Date.now()-(hvPref.t[tb]||0)>20000){hvPref.t[tb]=Date.now();try{SupabaseDB.syncTable(tb);}catch(_){}}
+},{passive:true});
+/* điều hướng mượt như "một trang": View Transitions cho thao tác bấm của người dùng */
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.hv-tile,.hv-pill,.hv-step,.hv-hubcard .top,#sidebarNav .nav-btn,.mnav-btn,.hv-crumb button')){window.__hvVTok=true;setTimeout(function(){window.__hvVTok=false;},0);}},true);
+(function(){
+    const _s=switchTab;
+    switchTab=function(id){
+        if(window.__hvVTok&&document.startViewTransition&&!document.body.classList.contains('hv-focus')&&!document.hidden&&!window.__hvVTbusy&&hvPerfTier()===2){
+            window.__hvVTok=false;window.__hvVTbusy=true;const self=this,args=arguments;
+            try{const vt=document.startViewTransition(function(){_s.apply(self,args);});vt.finished.finally(function(){window.__hvVTbusy=false;});}catch(e){window.__hvVTbusy=false;return _s.apply(this,arguments);}
+            return;
+        }
+        window.__hvVTok=false;return _s.apply(this,arguments);
+    };
+})();
+/* tin nhắn từ Service Worker (Background Sync): đẩy hàng đợi nhật ký */
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.t==='flush'){try{hvWLSend([]);}catch(_){}}});
+(function(){
+    const _w=hvWLSend;
+    hvWLSend=function(rows){
+        const run=function(){return _w(rows).then(function(){if(hvWLQueue().length&&'serviceWorker' in navigator){navigator.serviceWorker.ready.then(function(r){if(r.sync)r.sync.register('hv-wl').catch(function(){});}).catch(function(){});}});};
+        return navigator.locks?navigator.locks.request('hv-wl-send',run):run();
+    };
+})();
+
+/* ----- Canvas nền chạy trong Web Worker (OffscreenCanvas); tự quay về luồng chính nếu không hỗ trợ ----- */
+const HV_BG_WORKER=`
+let cv,ctx,w=0,h=0,dpr=1,dark=false,P=[],target=70,MIN=24,mouse={x:-9999,y:-9999},running=true,last=0,acc=0,frames=0,cols,lines;
+function mk(){const r=Math.random()*1.8+0.5;return {x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:r,k:Math.floor(r*3)%3};}
+function setCols(){cols=dark?['rgba(239,68,68,0.5)','rgba(16,185,129,0.5)','rgba(37,99,235,0.4)']:['rgba(220,38,38,0.35)','rgba(5,150,105,0.3)','rgba(37,99,235,0.25)'];const base=dark?0.15:0.1,rgb=dark?'239,68,68':'220,38,38';lines=[0.8,0.45,0.15].map(function(k){return 'rgba('+rgb+','+(base*k).toFixed(3)+')';});}
+function size(){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+function loop(now){
+  if(!running)return;const raw=now-last;last=now;const dt=Math.min(2.5,raw/16.667);acc+=Math.min(raw,100);frames++;
+  if(frames>=45){const avg=acc/frames;if(avg>21&&P.length>MIN)P.length=Math.max(MIN,P.length-8);else if(avg<15&&P.length<target){for(let i=0;i<4&&P.length<target;i++)P.push(mk());}postMessage({t:'stat',fps:Math.round(1000/avg),n:P.length});acc=0;frames=0;}
+  const n=P.length;
+  for(let i=0;i<n;i++){const p=P[i];p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;const dx=mouse.x-p.x,dy=mouse.y-p.y;if(dx*dx+dy*dy<22500){p.x-=dx*0.003*dt;p.y-=dy*0.003*dt;}}
+  ctx.clearRect(0,0,w,h);
+  for(let k=0;k<3;k++){ctx.fillStyle=cols[k];ctx.beginPath();for(let i=0;i<n;i++){const p=P[i];if(p.k!==k)continue;ctx.moveTo(p.x+p.r,p.y);ctx.arc(p.x,p.y,p.r,0,6.2832);}ctx.fill();}
+  ctx.lineWidth=0.6;
+  for(let b=0;b<3;b++){ctx.strokeStyle=lines[b];ctx.beginPath();for(let i=0;i<n;i++){const a=P[i];for(let j=i+1;j<n;j++){const q=P[j];const dx=a.x-q.x,dy=a.y-q.y;const d2=dx*dx+dy*dy;if(d2>=14400)continue;const bb=d2<2304?0:(d2<7056?1:2);if(bb!==b)continue;ctx.moveTo(a.x,a.y);ctx.lineTo(q.x,q.y);}}ctx.stroke();}
+  requestAnimationFrame(loop);
+}
+onmessage=function(e){const d=e.data;
+  if(d.t==='init'){try{cv=d.canvas;ctx=cv.getContext('2d',{alpha:true});w=d.w;h=d.h;dpr=d.dpr;dark=d.dark;target=d.target;size();for(let i=0;i<target;i++)P.push(mk());setCols();if(typeof requestAnimationFrame!=='function'){postMessage({t:'err'});return;}postMessage({t:'ready'});last=performance.now();requestAnimationFrame(loop);}catch(err){postMessage({t:'err'});}}
+  else if(d.t==='size'){w=d.w;h=d.h;if(cv)size();}
+  else if(d.t==='mouse'){mouse.x=d.x;mouse.y=d.y;}
+  else if(d.t==='theme'){dark=d.dark;setCols();}
+  else if(d.t==='vis'){running=!d.hidden;if(running){last=performance.now();acc=0;frames=0;requestAnimationFrame(loop);}}
+};`;
+let hvBgWorker=null;
+function hvBgTheme(){if(hvBgWorker)hvBgWorker.postMessage({t:'theme',dark:document.documentElement.getAttribute('data-theme')==='dark'});}
+function initBgCanvas(){
+    const canvas=document.getElementById('bgCanvas');if(!canvas)return;
+    const can=!!(window.OffscreenCanvas&&canvas.transferControlToOffscreen&&window.Worker&&!window.__hvNoWorker);
+    if(!can)return initBgCanvasMain(canvas);
+    try{
+        const fine=window.matchMedia&&matchMedia('(pointer:fine)').matches;const dpr=fine?Math.min(window.devicePixelRatio||1,1.5):1;
+        const off=canvas.transferControlToOffscreen();const url=URL.createObjectURL(new Blob([HV_BG_WORKER],{type:'text/javascript'}));
+        const w=new Worker(url);hvBgWorker=w;let ready=false,fell=false;
+        const fallback=function(){
+            if(fell)return;fell=true;try{w.terminate();}catch(_){}hvBgWorker=null;
+            const nc=document.createElement('canvas');nc.id='bgCanvas';nc.className=canvas.className;nc.setAttribute('style',canvas.getAttribute('style')||'');canvas.replaceWith(nc);initBgCanvasMain(nc);
+        };
+        w.onmessage=function(e){const d=e.data;if(d.t==='ready'){ready=true;URL.revokeObjectURL(url);}else if(d.t==='stat'){window.__hvFps=d.fps;window.__hvCanvasN=function(){return d.n;};}else if(d.t==='err'){fallback();}};
+        w.onerror=fallback;
+        w.postMessage({t:'init',canvas:off,w:window.innerWidth,h:window.innerHeight,dpr:dpr,dark:document.documentElement.getAttribute('data-theme')==='dark',target:hvPerfTier()===1?48:70},[off]);
+        setTimeout(function(){if(!ready)fallback();},2500);
+        let raf=0,mx=-9999,my=-9999;
+        window.addEventListener('pointermove',function(e){if(e.pointerType==='touch')return;mx=e.clientX;my=e.clientY;if(raf)return;raf=requestAnimationFrame(function(){raf=0;w.postMessage({t:'mouse',x:mx,y:my});});},{passive:true});
+        let rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){w.postMessage({t:'size',w:window.innerWidth,h:window.innerHeight});},120);},{passive:true});
+        document.addEventListener('visibilitychange',function(){w.postMessage({t:'vis',hidden:document.hidden});});
+    }catch(e){console.warn('offscreen bg',e);try{initBgCanvasMain(canvas);}catch(_){}}
+}
+(function(){const _t=hvApplyThemeColor;hvApplyThemeColor=function(){const r=_t.apply(this,arguments);try{hvBgTheme();}catch(_){}return r;};})();
+
+/* ----- Worker xử lý văn bản lớn (định dạng / đếm từ) ----- */
+let hvTextWorker=null,hvTextSeq=0;const hvTextPending={};
+function hvRunText(op,text){
+    return new Promise(function(res){
+        try{
+            if(!window.Worker)return res(op==='format'?hvAutoBreakText(text):hvTextStats(text));
+            if(!hvTextWorker){
+                const src='const HV_HEAD_RE='+HV_HEAD_RE.toString()+';'+[hvIsCap,hvEndsSent,hvSplitPoem,hvLooksPoem,hvABT_ORIG].map(function(f){return f.toString();}).join('\n')+'\nfunction stats(t){const w=t.trim()?t.trim().split(/\\s+/).length:0;return {words:w,chars:t.length};}\nonmessage=function(e){const d=e.data;postMessage({id:d.id,r:d.op==="format"?hvAutoBreakText(d.text):stats(d.text)});};';
+                hvTextWorker=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+                hvTextWorker.onmessage=function(e){const f=hvTextPending[e.data.id];if(f){delete hvTextPending[e.data.id];f(e.data.r);}};
+                hvTextWorker.onerror=function(){hvTextWorker=null;};
+            }
+            const id=++hvTextSeq;hvTextPending[id]=res;hvTextWorker.postMessage({id:id,op:op,text:text});
+            setTimeout(function(){if(hvTextPending[id]){delete hvTextPending[id];res(op==='format'?hvAutoBreakText(text):hvTextStats(text));}},4000);
+        }catch(e){res(op==='format'?hvAutoBreakText(text):hvTextStats(text));}
+    });
+}
+function hvTextStats(t){return {words:t.trim()?t.trim().split(/\s+/).length:0,chars:t.length};}
+(function(){
+    const _ff=hvFormatField;
+    hvFormatField=function(id){const el=document.getElementById(id);if(!el||el.value.length<4000)return _ff.apply(this,arguments);showToast('Đang định dạng văn bản dài…','info');hvRunText('format',el.value).then(function(v){el.value=v;el.rows=Math.min(20,Math.max(6,v.split('\n').length+1));showToast('Đã tự định dạng thơ/văn','success');});};
+})();
+
+/* ----- Cập nhật giao diện lạc quan có hoàn tác (phản ứng ở cộng đồng) ----- */
+cmReact=async function(id,k){
+    const p=cmFind(id);if(!p)return;const q=cmClone(p);q.reactions=q.reactions||{};const a=q.reactions[k]||[];const u=cmUid();
+    q.reactions[k]=a.indexOf(u)!==-1?a.filter(function(x){return x!==u;}):a.concat([u]);
+    cmApply(q);renderCmPosts();
+    if(!(await cmSavePost(q))){cmApply(p);renderCmPosts();}
+};
 </script>
 <script>
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ reg.addEventListener('updatefound',function(){ const nw=reg.installing; if(!nw)return; nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller){ try{ showToast('Có phiên bản mới — tải lại trang để cập nhật','info'); }catch(_){} } }); }); }).catch(function(e){ console.warn('SW',e); }); }); }
