@@ -1,5 +1,5 @@
 /* HỌC VĂN – Service Worker v4.9 (giới hạn cache, hạn dùng TTL, Navigation Preload, Background Sync) */
-const VERSION = 'hv-4.9.0';
+const VERSION = 'hv-4.9.1';
 const SHELL_CACHE = 'hv-shell-' + VERSION;
 const ASSET_CACHE = 'hv-assets-' + VERSION;
 const SHELL = ['./', './index.html'];
