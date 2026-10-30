@@ -1,5 +1,5 @@
 /* HỌC VĂN – Service Worker v4.9 (giới hạn cache, hạn dùng TTL, Navigation Preload, Background Sync) */
-const VERSION = 'hv-4.9.1';
+const VERSION = 'hv-4.9.2';
 const SHELL_CACHE = 'hv-shell-' + VERSION;
 const ASSET_CACHE = 'hv-assets-' + VERSION;
 const SHELL = ['./', './index.html'];
@@ -50,6 +50,18 @@ async function trim(name, max) {
   for (let i = 0; i < keys.length - max; i++) await c.delete(keys[i]);
 }
 
+
+// Truyền phản hồi dạng dòng (ReadableStream) từ cache để trang bắt đầu dựng sớm khi ngoại tuyến
+function streamResponse(res) {
+  if (!res || !res.body || typeof ReadableStream === 'undefined') return res;
+  const reader = res.body.getReader();
+  const rs = new ReadableStream({
+    async pull(c) { const r = await reader.read(); if (r.done) c.close(); else c.enqueue(r.value); },
+    cancel() { try { reader.cancel(); } catch (_) {} }
+  });
+  return new Response(rs, { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
 async function stamp(res) {
   if (!res || res.type === 'opaque' || !res.ok) return res;
   const h = new Headers(res.headers);
@@ -75,7 +87,7 @@ self.addEventListener('fetch', function (e) {
         if (res && res.ok) { const copy = res.clone(); caches.open(SHELL_CACHE).then(function (c) { c.put('./', copy); }); }
         return res;
       } catch (_) {
-        return (await caches.match(req)) || (await caches.match('./')) || (await caches.match('./index.html'));
+        return streamResponse((await caches.match(req)) || (await caches.match('./')) || (await caches.match('./index.html')));
       }
     })());
     return;
