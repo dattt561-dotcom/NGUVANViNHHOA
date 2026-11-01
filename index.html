@@ -734,6 +734,13 @@ html[data-theme="dark"] .hv-timer{color:#6ee7b7;}html[data-theme="dark"] .hv-tim
 }
 #bgCanvasLines{transform:translateZ(0);will-change:transform;}
 .landing-nav a.hv-sec-on{color:#dc2626 !important;font-weight:800;}
+
+/* ===== v4.9.3 · Chú thích nổi bằng CSS Anchor Positioning (có dự phòng JS) ===== */
+#hvTip{position:fixed;z-index:100090;pointer-events:none;padding:6px 11px;border-radius:10px;background:rgba(15,20,32,.94);color:#fff;font:700 11.5px Inter,system-ui,sans-serif;max-width:240px;white-space:nowrap;opacity:0;transition:opacity .15s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+#hvTip.on{opacity:1;}
+@supports (position-area:left center){
+  #hvTip.anchored{position-anchor:--hv-tip;position-area:left center;margin:0 8px;position-try-fallbacks:flip-inline,flip-block;left:auto;top:auto;}
+}
 </style>
 <script type="speculationrules">{"prefetch":[{"source":"document","where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
 </head>
@@ -3523,7 +3530,7 @@ function buildMobileNav(){
 /* =====================================================================
    v4.3 · CỘNG ĐỒNG HỌC SINH · ĐÁNH GIÁ · PWA · MINH BẠCH
    ===================================================================== */
-const HV_VERSION='4.9.2';
+const HV_VERSION='4.9.3';
 let communityPosts=[]; let feedbackList=[];
 try{ communityPosts=JSON.parse(safeGetItem('hv_cm_cache','[]'))||[]; }catch(_){ communityPosts=[]; }
 const CM_CATS=[{id:'all',label:'Tất cả',icon:'🌈'},{id:'hoi',label:'Hỏi bài',icon:'🙋'},{id:'chia-se',label:'Chia sẻ',icon:'✨'},{id:'goc-van',label:'Góc văn',icon:'✍️'},{id:'huong-dan',label:'Dùng web',icon:'🧭'},{id:'tro-chuyen',label:'Trò chuyện',icon:'💬'}];
@@ -5524,6 +5531,23 @@ function hvPullSignal(t){
     const ac=hvPullAC[t]=new AbortController();const to=(typeof AbortSignal!=='undefined'&&AbortSignal.timeout)?AbortSignal.timeout(25000):null;
     return (to&&AbortSignal.any)?AbortSignal.any([ac.signal,to]):(to||ac.signal);
 }
+
+/* ----- Chú thích nổi: CSS Anchor Positioning khi có, tự tính vị trí bằng JS khi không ----- */
+const hvAnchorOK=!!(window.CSS&&CSS.supports&&CSS.supports('position-area','left center')&&CSS.supports('anchor-name','--a'));
+let hvTipTarget=null;
+const hvTipEl=(function(){const e=document.createElement('div');e.id='hvTip';e.setAttribute('role','tooltip');document.body.appendChild(e);return e;})();
+function hvTipHide(){if(hvTipTarget&&hvAnchorOK)hvTipTarget.style.anchorName='';hvTipTarget=null;hvTipEl.classList.remove('on');}
+function hvTipShow(t){
+    const text=t.getAttribute('data-tip');if(!text)return;hvTipTarget=t;hvTipEl.textContent=text;
+    if(hvAnchorOK){t.style.anchorName='--hv-tip';hvTipEl.classList.add('anchored');hvTipEl.style.left='';hvTipEl.style.top='';}
+    else{hvTipEl.classList.remove('anchored');const r=t.getBoundingClientRect(),w=hvTipEl.offsetWidth,h=hvTipEl.offsetHeight;let x=r.left-w-8;if(x<8)x=Math.min(window.innerWidth-w-8,r.right+8);hvTipEl.style.left=Math.max(8,x)+'px';hvTipEl.style.top=Math.max(8,Math.min(window.innerHeight-h-8,r.top+r.height/2-h/2))+'px';}
+    hvTipEl.classList.add('on');
+}
+document.addEventListener('pointerover',function(e){const t=e.target.closest&&e.target.closest('[data-tip]');if(t){if(t!==hvTipTarget){hvTipHide();hvTipShow(t);}}else if(hvTipTarget)hvTipHide();},{passive:true});
+document.addEventListener('focusin',function(e){const t=e.target.closest&&e.target.closest('[data-tip]');if(t)hvTipShow(t);});
+document.addEventListener('focusout',hvTipHide);
+window.addEventListener('scroll',hvTipHide,{passive:true,capture:true});
+document.querySelectorAll('.fab-btn[title],#hvFocusBar .fb-ic[title]').forEach(function(e){e.setAttribute('data-tip',e.getAttribute('title'));e.removeAttribute('title');});
 </script>
 <script>
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ reg.addEventListener('updatefound',function(){ const nw=reg.installing; if(!nw)return; nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller){ try{ showToast('Có phiên bản mới — tải lại trang để cập nhật','info'); }catch(_){} } }); }); }).catch(function(e){ console.warn('SW',e); }); }); }
