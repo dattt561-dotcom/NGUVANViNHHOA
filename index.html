@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>HỌC VĂN 4.8 — THCS & THPT Vĩnh Hòa</title>
+<title>HỌC VĂN 4.9 — THCS & THPT Vĩnh Hòa</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -740,6 +740,20 @@ html[data-theme="dark"] .hv-timer{color:#6ee7b7;}html[data-theme="dark"] .hv-tim
 #hvTip.on{opacity:1;}
 @supports (position-area:left center){
   #hvTip.anchored{position-anchor:--hv-tip;position-area:left center;margin:0 8px;position-try-fallbacks:flip-inline,flip-block;left:auto;top:auto;}
+}
+
+/* ===== v4.9.5 · Subgrid + @scope (cải tiến lũy tiến, trình duyệt cũ vẫn hiển thị đúng) ===== */
+@supports (grid-template-rows:subgrid){
+  .hv-trust{grid-auto-rows:auto;}
+  .hv-trust-card{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;}
+  .hv-trust-card .ic{align-self:start;}
+}
+@scope (.ex-poem){
+  .ex-v{transition:background .2s ease;border-radius:6px;}
+  .ex-v:hover{background:rgba(217,119,6,.14);}
+}
+@scope (.ex-body){
+  :scope .ex-q:hover b{text-decoration:underline;}
 }
 </style>
 <script type="speculationrules">{"prefetch":[{"source":"document","where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
@@ -2012,51 +2026,55 @@ const SupabaseDB = {
         const self = this;
         this._healT = setTimeout(function(){
             if(self._healBusy || Date.now()-self._healLast < 45000) return;
-            self.healAccounts().then(function(r){ if(r && r.pushed){ try{ showToast('Đã tự lưu '+r.pushed+' tài khoản học sinh lên Cloud ✓','success'); renderStudentTable(); }catch(_){} } }).catch(function(e){ console.warn('heal accounts', e); });
+            self.healAccounts().then(function(r){ if(r && (r.pushed||r.adopted)){ try{ showToast(r.adopted?('Đã đồng bộ '+r.adopted+' tài khoản học sinh theo Cloud ✓'):('Đã tự lưu '+r.pushed+' tài khoản học sinh lên Cloud ✓'),'success'); renderStudentTable(); }catch(_){} } }).catch(function(e){ console.warn('heal accounts', e); });
         }, 2500);
     },
     async healAccounts(force){
-        if(this._healBusy || !this.client || !this.online) return {created:0,pushed:0};
+        if(this._healBusy || !this.client || !this.online) return {created:0,pushed:0,adopted:0};
         this._healBusy = true;
         try{
             const vis = getVisibleClassIds();
             const studs = studentsData.filter(function(s){ return vis.indexOf(s.classId)!==-1; });
-            if(!studs.length) return {created:0,pushed:0};
+            if(!studs.length) return {created:0,pushed:0,adopted:0};
             const accounts = getStudentAccounts().slice();
+            const cloud = {};
+            const classIds = Array.from(new Set(studs.map(function(s){ return s.classId; })));
+            for(const cid of classIds){
+                const r = await this.client.from('student_accounts').select('id,student_id,class_id,teacher_code,email,password_plain,parent_code,parent_password').eq('class_id', cid).limit(5000);
+                if(!r.error && r.data) r.data.forEach(function(x){ cloud[x.id] = x; });
+            }
+            // 1) Cloud là nguồn đúng: nhận lại tài khoản đã có trên Cloud (không tạo mới đè lên, tránh lệch giữa các máy)
+            let adopted = 0;
+            studs.forEach(function(st){
+                const c = cloud[st.id+'__'+st.classId];if(!c) return;
+                const acc = { studentId:st.id, classId:st.classId, teacherCode:c.teacher_code||'', email:c.email, password:c.password_plain, parentCode:c.parent_code, parentPassword:c.parent_password };
+                const i = accounts.findIndex(function(a){ return a.studentId===st.id && a.classId===st.classId; });
+                if(i<0){ accounts.push(acc); adopted++; }
+                else if(accounts[i].email!==acc.email || accounts[i].password!==acc.password){ accounts[i] = Object.assign({}, accounts[i], acc); adopted++; }
+            });
+            // 2) Chỉ tạo mới cho học sinh chưa có tài khoản ở cả máy lẫn Cloud
             const created = [];
             studs.forEach(function(st){
                 if(!accounts.some(function(a){ return a.studentId===st.id && a.classId===st.classId; })){
                     const tc = (getClassById(st.classId)||{}).teacherCode || '';
                     const taken = accounts.concat(created).map(function(x){ return x.email; });
-                    const acc = generateStudentAccount(st.id, st.name, st.classId, tc, taken);
-                    created.push(acc);
+                    created.push(generateStudentAccount(st.id, st.name, st.classId, tc, taken));
                 }
             });
             const mine = accounts.concat(created).filter(function(a){ return studs.some(function(st){ return st.id===a.studentId && st.classId===a.classId; }); });
-            const inCloud = {};
-            const classIds = Array.from(new Set(mine.map(function(a){ return a.classId; })));
-            for(const cid of classIds){
-                const r = await this.client.from('student_accounts').select('id').eq('class_id', cid).limit(5000);
-                if(!r.error && r.data) r.data.forEach(function(x){ inCloud[x.id] = 1; });
-            }
-            const missing = mine.filter(function(a){ return !inCloud[a.studentId+'__'+a.classId]; });
+            const missing = mine.filter(function(a){ return !cloud[a.studentId+'__'+a.classId]; });
             if(missing.length) await this.upsertAccounts(missing, true);
-            if(created.length){
-                saveStudentAccounts(accounts.concat(created));
+            if(created.length || adopted || missing.length){
+                const all = accounts.concat(created);
+                saveStudentAccounts(all);
                 const pc = getParentCodes();
-                created.forEach(function(a){ pc[a.parentCode] = { studentId:a.studentId, classId:a.classId, password:a.parentPassword }; });
+                all.forEach(function(a){ if(a.parentCode) pc[a.parentCode] = { studentId:a.studentId, classId:a.classId, password:a.parentPassword }; });
                 saveParentCodes(pc);
             }
-            if(missing.length){
-                // email/mã PH có thể đã được đổi để tránh trùng -> cập nhật lại bản lưu cục bộ
-                const all = getStudentAccounts().slice();
-                missing.forEach(function(m){ const i = all.findIndex(function(a){ return a.studentId===m.studentId && a.classId===m.classId; }); if(i>=0) all[i] = Object.assign({}, all[i], { email:m.email, parentCode:m.parentCode }); });
-                saveStudentAccounts(all);
-            }
-            return {created:created.length, pushed:missing.length};
+            return {created:created.length, pushed:missing.length, adopted:adopted};
         }catch(e){
-            showCloudStatus('Không lưu được tài khoản HS lên Cloud: '+(e && e.message ? e.message : e),'error');
-            return {created:0,pushed:0};
+            showCloudStatus('Không đồng bộ được tài khoản HS với Cloud: '+(e && e.message ? e.message : e),'error');
+            return {created:0,pushed:0,adopted:0};
         }finally{ this._healBusy=false; this._healLast=Date.now(); }
     },
     async insert(table, row){
@@ -2602,19 +2620,20 @@ async function handleLogin(e){
     const email=document.getElementById('loginEmail').value.trim();
     const pass=document.getElementById('loginPassword').value;
     const tcode=document.getElementById('loginTeacherCode').value.trim();
-    const ccode=document.getElementById('loginClassCode').value.trim().toUpperCase();
+    const ccode=hvCleanCred(document.getElementById('loginClassCode').value).replace(/\s+/g,'').toUpperCase();
     // Học sinh: đăng nhập qua RPC (không đọc student_accounts phía client)
     if(ccode && !tcode){
         if(!SupabaseDB.online){ SoundEngine.play('error'); showToast('Cần kết nối cloud!','error'); return; }
         try{
-            const { data, error } = await SupabaseDB.client.rpc('hv_student_login', {
-                p_class_code: ccode, p_email: email, p_password: pass
-            });
-            if(error) throw error;
-            const row = data?.[0];
-            if(!row) throw new Error('Sai thông tin');
+            let row=null,lastErr=null,usedEmail=email;
+            for(const cand of hvCredCandidates(email,pass)){
+                const r=await SupabaseDB.client.rpc('hv_student_login',{p_class_code:ccode,p_email:cand.e,p_password:cand.p});
+                if(r.error){lastErr=r.error;continue;}
+                if(r.data&&r.data[0]){row=r.data[0];usedEmail=cand.e;break;}
+            }
+            if(!row){if(lastErr)throw lastErr;throw new Error('Sai thông tin đăng nhập — kiểm tra email, mật khẩu, mã lớp (chú ý viết hoa và khoảng trắng)');}
             currentUser = {
-                name: row.student_name, email,
+                name: row.student_name, email: usedEmail,
                 role: 'student', classId: row.class_id,
                 studentId: row.student_id, sessionToken: row.token,
                 teacherCode: row.teacher_code || ''
@@ -2631,10 +2650,10 @@ async function handleLogin(e){
     }
     // Giáo viên / Admin: BẮT BUỘC nhập Mã GV
     if(!tcode){ SoundEngine.play('error'); showToast('Giáo viên vui lòng nhập Mã GV (học sinh nhập Mã lớp).','error'); return; }
-    if(!parseTeacherCode(tcode).valid){ SoundEngine.play('error'); showToast('Mã GV sai!','error'); return; }
+    if(!parseTeacherCode(tcode).valid){ SoundEngine.play('error'); currentUser=null;showToast('Mã GV sai!','error'); return; }
     // Giáo viên / Admin: ưu tiên Supabase Auth
     if(SupabaseDB.online){
-        const r = await SupabaseDB.signIn(email, pass);
+        const r = await hvSignInRobust(email, pass);
         if(r.ok){
             const p = r.profile || {};
             currentUser = {
@@ -2647,11 +2666,11 @@ async function handleLogin(e){
             };
             {
                 const parsed=parseTeacherCode(tcode);
-                if(!parsed.valid){ SoundEngine.play('error'); showToast('Mã GV sai!','error'); return; }
+                if(!parsed.valid){ SoundEngine.play('error'); currentUser=null;showToast('Mã GV sai!','error'); return; }
                 const profCode=String(p.teacher_code||r.user.user_metadata?.teacher_code||'').toLowerCase();
                 const profRole=String(p.role||r.user.user_metadata?.role||'').toLowerCase();
-                if(profCode && profCode!==String(parsed.teacherCode).toLowerCase()){ try{ SupabaseDB.client.auth.signOut({scope:'local'}); }catch(_){} SoundEngine.play('error'); showToast('Mã GV không khớp với tài khoản này!','error'); return; }
-                if(!profCode && parsed.role==='superadmin' && profRole!=='superadmin' && profRole!=='admin'){ try{ SupabaseDB.client.auth.signOut({scope:'local'}); }catch(_){} SoundEngine.play('error'); showToast('Tài khoản này không có quyền Admin!','error'); return; }
+                if(profCode && profCode!==String(parsed.teacherCode).toLowerCase()){ try{ SupabaseDB.client.auth.signOut({scope:'local'}); }catch(_){} SoundEngine.play('error'); currentUser=null;showToast('Mã GV không khớp với tài khoản này!','error'); return; }
+                if(!profCode && parsed.role==='superadmin' && profRole!=='superadmin' && profRole!=='admin'){ try{ SupabaseDB.client.auth.signOut({scope:'local'}); }catch(_){} SoundEngine.play('error'); currentUser=null;showToast('Tài khoản này không có quyền Admin!','error'); return; }
                 currentUser.role=parsed.role;
                 currentUser.teacherCode=parsed.teacherCode;
             }
@@ -2672,9 +2691,9 @@ async function handleLogin(e){
     currentUser={...u};
     if(tcode){
         const p=parseTeacherCode(tcode);
-        if(p.valid&&u.teacherCode&&String(u.teacherCode).toLowerCase()!==String(p.teacherCode).toLowerCase()){SoundEngine.play('error');showToast('Mã GV không khớp với tài khoản này!','error');return;}
+        if(p.valid&&u.teacherCode&&String(u.teacherCode).toLowerCase()!==String(p.teacherCode).toLowerCase()){SoundEngine.play('error');currentUser=null;showToast('Mã GV không khớp với tài khoản này!','error');return;}
         if(p.valid){currentUser.role=p.role;currentUser.teacherCode=p.teacherCode;const rt=getTeacherByCode(p.teacherCode);if(rt){currentUser.name=rt.name;currentUser.email=rt.email;currentUser.school=rt.school||'';}}
-        else{SoundEngine.play('error');showToast('Mã GV sai!','error');return;}
+        else{SoundEngine.play('error');currentUser=null;showToast('Mã GV sai!','error');return;}
     }
     safeSessionSet('hv_current_user',JSON.stringify(currentUser));
     if(SupabaseDB.online){ try{ await SupabaseDB.syncFromCloud(); }catch(_){} try{ SupabaseDB.startRealtime(); }catch(_){} }
@@ -3530,7 +3549,7 @@ function buildMobileNav(){
 /* =====================================================================
    v4.3 · CỘNG ĐỒNG HỌC SINH · ĐÁNH GIÁ · PWA · MINH BẠCH
    ===================================================================== */
-const HV_VERSION='4.9.3';
+const HV_VERSION='4.9.5';
 let communityPosts=[]; let feedbackList=[];
 try{ communityPosts=JSON.parse(safeGetItem('hv_cm_cache','[]'))||[]; }catch(_){ communityPosts=[]; }
 const CM_CATS=[{id:'all',label:'Tất cả',icon:'🌈'},{id:'hoi',label:'Hỏi bài',icon:'🙋'},{id:'chia-se',label:'Chia sẻ',icon:'✨'},{id:'goc-van',label:'Góc văn',icon:'✍️'},{id:'huong-dan',label:'Dùng web',icon:'🧭'},{id:'tro-chuyen',label:'Trò chuyện',icon:'💬'}];
@@ -4600,13 +4619,13 @@ function hvFitWork(){
     const w=document.getElementById('splitView');if(!w||w.classList.contains('hidden'))return;
     const bar=document.getElementById('hvWorkBar');const top=w.getBoundingClientRect().top;
     const barH=bar&&!bar.classList.contains('hidden')?bar.offsetHeight+18:0;
-    const mobileNav=window.innerWidth<768?80:0;
-    w.style.height=Math.max(340,Math.round(window.innerHeight-Math.max(top,0)-barH-mobileNav-14))+'px';
+    const mobileNav=(window.innerWidth<768&&!document.body.classList.contains('hv-focus'))?80:0;
+    w.style.height=Math.max(340,Math.round(window.innerHeight-Math.max(top,0)-barH-mobileNav-(document.body.classList.contains('hv-focus')?30:14)))+'px';
 }
 function hvScrollToWork(){
     const w=document.getElementById('splitView');if(!w||w.classList.contains('hidden'))return;
     const hdr=document.querySelector('header');const off=hdr&&hdr.offsetParent!==null&&hvPos(hdr)!=='static'?hdr.getBoundingClientRect().height:0;
-    w.style.scrollMarginTop=(off+10)+'px';try{w.scrollIntoView({block:'start',behavior:'auto'});}catch(_){}
+    w.style.scrollMarginTop=(document.body.classList.contains('hv-focus')?72:off+10)+'px';try{w.scrollIntoView({block:'start',behavior:'auto'});}catch(_){}
 }
 function hvLeftPaneHtml(a){
     const E=escapeHtml;
@@ -5440,7 +5459,7 @@ function hvWindowTable(id,first,step){
     },{rootMargin:'600px 0px'});
     io.observe(sen);tb.__hvIO=io;
 }
-function hvWinWrap(fn,id){const f=window[fn];if(typeof f!=='function')return;window[fn]=function(){const tb=document.getElementById(id);if(tb&&tb.__hvIO){tb.__hvIO.disconnect();tb.__hvIO=null;}const r=f.apply(this,arguments);try{hvWindowTable(id,60,60);}catch(_){}return r;};}
+function hvWinWrap(fn,id){const f=window[fn];if(typeof f!=='function')return;window[fn]=function(){const tb=document.getElementById(id);if(tb&&tb.__hvIO){tb.__hvIO.disconnect();tb.__hvIO=null;}if(tb&&tb.__hvV){tb.__hvV.destroy();tb.__hvV=null;}const r=f.apply(this,arguments);try{if(!hvVirtualTable(id,400))hvWindowTable(id,60,60);}catch(_){}return r;};}
 hvWinWrap('renderSubmissionsTable','submissionsTableBody');hvWinWrap('renderStudentTable','studentTableBody');hvWinWrap('renderGradeHistory','historyTableBody');
 
 /* ----- Canvas nền 2 lớp: chấm vẽ mọi khung hình, đường nối vẽ nửa tốc độ (Worker + OffscreenCanvas) ----- */
@@ -5548,6 +5567,92 @@ document.addEventListener('focusin',function(e){const t=e.target.closest&&e.targ
 document.addEventListener('focusout',hvTipHide);
 window.addEventListener('scroll',hvTipHide,{passive:true,capture:true});
 document.querySelectorAll('.fab-btn[title],#hvFocusBar .fb-ic[title]').forEach(function(e){e.setAttribute('data-tip',e.getAttribute('title'));e.removeAttribute('title');});
+
+/* =====================================================================
+   v4.9.4 · ĐĂNG NHẬP ỔN ĐỊNH MỌI THIẾT BỊ · TỰ CẬP NHẬT PHIÊN BẢN · ĐỒNG BỘ TÀI KHOẢN THEO CLOUD
+   ===================================================================== */
+function hvCleanCred(t){return String(t==null?'':t).normalize('NFC').replace(/[\u200B-\u200D\u2060\uFEFF]/g,'').replace(/[\u00A0\u2007\u202F]/g,' ');}
+function hvCredCandidates(email,pass){
+    const es=[],ps=[],seen={};const out=[];
+    const addE=function(x){if(x&&es.indexOf(x)===-1)es.push(x);};const addP=function(x){if(x!=null&&ps.indexOf(x)===-1)ps.push(x);};
+    const eRaw=String(email||''),eClean=hvCleanCred(eRaw).trim();
+    addE(eRaw.trim());addE(eClean);addE(eClean.toLowerCase());
+    const pRaw=String(pass==null?'':pass),pClean=hvCleanCred(pRaw);
+    addP(pRaw);addP(pClean);addP(pRaw.trim());addP(pClean.trim());
+    es.forEach(function(e){ps.forEach(function(p){const k=e+'\u0000'+p;if(!seen[k]){seen[k]=1;out.push({e:e,p:p});}});});
+    return out.slice(0,8);
+}
+async function hvSignInRobust(email,pass){
+    const c=hvCredCandidates(email,pass);let last=null;
+    for(const x of c){const r=await SupabaseDB.signIn(x.e,x.p);if(r&&r.ok)return r;last=r;}
+    return last||{ok:false,error:'Sai thông tin'};
+}
+/* ----- Tự phát hiện bản mới (máy khác đang chạy mã cũ) ----- */
+let hvUpdLast=0,hvUpdShown=false;
+async function hvCheckUpdate(){
+    try{
+        if(navigator.onLine===false||Date.now()-hvUpdLast<60000)return;hvUpdLast=Date.now();
+        const r=await fetch(location.pathname.replace(/\/[^\/]*$/,'/')+'index.html?v='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout?AbortSignal.timeout(10000):undefined});
+        if(!r.ok)return;const t=await r.text();const m=t.match(/const HV_VERSION='([\d.]+)'/);if(!m||m[1]===HV_VERSION)return;
+        const newer=m[1].split('.').map(Number),cur=HV_VERSION.split('.').map(Number);let isNew=false;for(let i=0;i<3;i++){if((newer[i]||0)>(cur[i]||0)){isNew=true;break;}if((newer[i]||0)<(cur[i]||0))break;}
+        if(!isNew)return;
+        const guard='hv_reloaded_for';
+        if((typeof currentUser==='undefined'||!currentUser)&&sessionStorage.getItem(guard)!==m[1]){sessionStorage.setItem(guard,m[1]);await hvReloadFresh();return;}
+        hvShowUpdateBar(m[1]);
+    }catch(_){}
+}
+async function hvReloadFresh(){
+    try{if('caches' in window){const ks=await caches.keys();await Promise.all(ks.map(function(k){return caches.delete(k);}));}}catch(_){}
+    try{if(navigator.serviceWorker){const regs=await navigator.serviceWorker.getRegistrations();regs.forEach(function(r){r.update();});}}catch(_){}
+    location.reload();
+}
+function hvShowUpdateBar(v){
+    if(hvUpdShown)return;hvUpdShown=true;
+    const b=document.createElement('div');b.id='hvUpdateBar';b.style.cssText='position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100080;background:linear-gradient(135deg,#059669,#2563eb);color:#fff;padding:11px 18px;border-radius:999px;font:800 13px Inter,system-ui,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.35);cursor:pointer;max-width:92vw;text-align:center';
+    b.textContent='🔄 Có phiên bản mới '+v+' — bấm để cập nhật (bài đang viết đã được lưu nháp)';
+    b.onclick=function(){try{hvDraftSave();}catch(_){}hvReloadFresh();};document.body.appendChild(b);
+}
+setTimeout(hvCheckUpdate,4000);setInterval(hvCheckUpdate,600000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)hvCheckUpdate();});
+/* ----- Thuộc tính bàn phím cho ô đăng nhập (không tự viết hoa / sửa chính tả / thêm dấu cách) ----- */
+(function(){
+    const set=function(id,attrs){const e=document.getElementById(id);if(!e)return;Object.keys(attrs).forEach(function(k){e.setAttribute(k,attrs[k]);});};
+    set('loginEmail',{autocapitalize:'off',autocorrect:'off',spellcheck:'false',autocomplete:'username',inputmode:'email'});
+    set('loginPassword',{autocapitalize:'off',autocorrect:'off',spellcheck:'false',autocomplete:'current-password'});
+    set('loginTeacherCode',{autocapitalize:'off',autocorrect:'off',spellcheck:'false',autocomplete:'off'});
+    set('loginClassCode',{autocapitalize:'characters',autocorrect:'off',spellcheck:'false',autocomplete:'off'});
+})();
+
+/* =====================================================================
+   v4.9.5 · CUỘN ẢO THẬT CHO BẢNG RẤT LỚN + DỰ PHÒNG SAO CHÉP
+   ===================================================================== */
+function hvVirtualTable(id,threshold){
+    const tb=document.getElementById(id);if(!tb)return false;
+    const rows=Array.from(tb.children);if(rows.length<threshold)return false;
+    rows.forEach(function(r){r.remove();});
+    const mk=function(){const tr=document.createElement('tr');tr.innerHTML='<td colspan="99" style="padding:0;border:0;height:0"></td>';return tr;};
+    const top=mk(),bot=mk();tb.appendChild(top);tb.appendChild(bot);
+    const H=new Array(rows.length).fill(0);let avg=48,s=0,e=0,raf=0;
+    const hOf=function(i){return H[i]||avg;};
+    const prefix=function(n){let t=0;for(let i=0;i<n;i++)t+=hOf(i);return t;};
+    function render(){
+        raf=0;const r=tb.getBoundingClientRect(),vh=window.innerHeight;
+        const y=Math.max(0,-r.top-300);let acc=0,i=0;while(i<rows.length&&acc+hOf(i)<y){acc+=hOf(i);i++;}
+        if(i>=rows.length)i=Math.max(0,rows.length-30);let j=i,span=0;const need=vh+600;while(j<rows.length&&span<need){span+=hOf(j);j++;}
+        if(i===s&&j===e&&tb.children.length>2)return;
+        for(let k=s;k<e;k++)if(rows[k].parentNode===tb)rows[k].remove();
+        s=i;e=j;const frag=document.createDocumentFragment();for(let k=s;k<e;k++)frag.appendChild(rows[k]);tb.insertBefore(frag,bot);
+        let sum=0,cnt=0;for(let k=s;k<e;k++){const h=rows[k].offsetHeight;if(h){H[k]=h;sum+=h;cnt++;}}if(cnt)avg=Math.round(sum/cnt)||avg;
+        top.firstChild.style.height=prefix(s)+'px';bot.firstChild.style.height=(prefix(rows.length)-prefix(e))+'px';
+        const tot=prefix(rows.length);if(Math.abs(tot-(render._tot||tot))>40&&(render._n=(render._n||0)+1)<5){render._tot=tot;onScroll();}else{render._tot=tot;render._n=0;}
+    }
+    const onScroll=function(){if(!raf)raf=requestAnimationFrame(render);};
+    window.addEventListener('scroll',onScroll,{passive:true,capture:true});window.addEventListener('resize',onScroll,{passive:true});
+    tb.__hvV={destroy:function(){window.removeEventListener('scroll',onScroll,true);window.removeEventListener('resize',onScroll);if(raf)cancelAnimationFrame(raf);}};
+    render();return true;
+}
+function hvCopyFallback(t){return new Promise(function(res,rej){try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:-1000px;opacity:0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();ok?res():rej(new Error('copy failed'));}catch(e){rej(e);}});}
+(function(){try{if(!navigator.clipboard||!navigator.clipboard.writeText)return;const w=navigator.clipboard.writeText.bind(navigator.clipboard);navigator.clipboard.writeText=function(t){return w(t).catch(function(){return hvCopyFallback(t);});};}catch(_){}})();
 </script>
 <script>
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ reg.addEventListener('updatefound',function(){ const nw=reg.installing; if(!nw)return; nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller){ try{ showToast('Có phiên bản mới — tải lại trang để cập nhật','info'); }catch(_){} } }); }); }).catch(function(e){ console.warn('SW',e); }); }); }
