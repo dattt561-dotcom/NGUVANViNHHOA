@@ -2652,6 +2652,7 @@ async function handleLogin(e){
     if(!tcode){ SoundEngine.play('error'); showToast('Giáo viên vui lòng nhập Mã GV (học sinh nhập Mã lớp).','error'); return; }
     if(!parseTeacherCode(tcode).valid){ SoundEngine.play('error'); currentUser=null;showToast('Mã GV sai!','error'); return; }
     // Giáo viên / Admin: ưu tiên Supabase Auth
+    let cloudErr='';
     if(SupabaseDB.online){
         const r = await hvSignInRobust(email, pass);
         if(r.ok){
@@ -2683,19 +2684,20 @@ async function handleLogin(e){
             return;
         }
         // Cloud fail → fallback local
-        console.warn('Supabase login fallback:', r.error);
+        console.warn('Supabase login fallback:', r.error); cloudErr = r.error || 'unknown';
     }
     let u=getUsers().find(x=>x.email.toLowerCase()===email.toLowerCase()&&x.password===pass);
     if(!u)u=DEFAULT_USERS.find(x=>x.email.toLowerCase()===email.toLowerCase()&&x.password===pass);
-    if(!u){SoundEngine.play('error');showToast('TK hoặc MK sai!','error');return;}
+    if(!u){SoundEngine.play('error');showToast(hvCloudErrMsg(cloudErr)||'TK hoặc MK sai!','error');return;}
     currentUser={...u};
     if(tcode){
         const p=parseTeacherCode(tcode);
         if(p.valid&&u.teacherCode&&String(u.teacherCode).toLowerCase()!==String(p.teacherCode).toLowerCase()){SoundEngine.play('error');currentUser=null;showToast('Mã GV không khớp với tài khoản này!','error');return;}
-        if(p.valid){currentUser.role=p.role;currentUser.teacherCode=p.teacherCode;const rt=getTeacherByCode(p.teacherCode);if(rt){currentUser.name=rt.name;currentUser.email=rt.email;currentUser.school=rt.school||'';}}
+        if(p.valid){currentUser.role=p.role;currentUser.teacherCode=p.teacherCode;const rt=getTeacherByCode(p.teacherCode);if(rt){if(!currentUser.name)currentUser.name=rt.name;if(!currentUser.email)currentUser.email=rt.email;if(!currentUser.school)currentUser.school=rt.school||'';}}
         else{SoundEngine.play('error');currentUser=null;showToast('Mã GV sai!','error');return;}
     }
     safeSessionSet('hv_current_user',JSON.stringify(currentUser));
+    if(cloudErr&&SupabaseDB.online){ try{ hvMigrateToast(await hvMigrateLocalTeacher(u,pass,tcode)); }catch(_){} }
     if(SupabaseDB.online){ try{ await SupabaseDB.syncFromCloud(); }catch(_){} try{ SupabaseDB.startRealtime(); }catch(_){} }
     hideAuth();
     setTimeout(()=>{showApp();setupNavigationByRole();updateUserUI();showToast(`Chào ${currentUser.name}!`,'success');},200);
@@ -3549,7 +3551,7 @@ function buildMobileNav(){
 /* =====================================================================
    v4.3 · CỘNG ĐỒNG HỌC SINH · ĐÁNH GIÁ · PWA · MINH BẠCH
    ===================================================================== */
-const HV_VERSION='4.9.5';
+const HV_VERSION='4.9.6';
 let communityPosts=[]; let feedbackList=[];
 try{ communityPosts=JSON.parse(safeGetItem('hv_cm_cache','[]'))||[]; }catch(_){ communityPosts=[]; }
 const CM_CATS=[{id:'all',label:'Tất cả',icon:'🌈'},{id:'hoi',label:'Hỏi bài',icon:'🙋'},{id:'chia-se',label:'Chia sẻ',icon:'✨'},{id:'goc-van',label:'Góc văn',icon:'✍️'},{id:'huong-dan',label:'Dùng web',icon:'🧭'},{id:'tro-chuyen',label:'Trò chuyện',icon:'💬'}];
@@ -5653,6 +5655,43 @@ function hvVirtualTable(id,threshold){
 }
 function hvCopyFallback(t){return new Promise(function(res,rej){try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:-1000px;opacity:0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();ok?res():rej(new Error('copy failed'));}catch(e){rej(e);}});}
 (function(){try{if(!navigator.clipboard||!navigator.clipboard.writeText)return;const w=navigator.clipboard.writeText.bind(navigator.clipboard);navigator.clipboard.writeText=function(t){return w(t).catch(function(){return hvCopyFallback(t);});};}catch(_){}})();
+
+/* =====================================================================
+   v4.9.6 · ĐỒNG BỘ TÀI KHOẢN GIÁO VIÊN GIỮA CÁC MÁY (Cloud là gốc)
+   ===================================================================== */
+function hvCloudErrMsg(e){
+    const m=String(e&&e.message||e||'');
+    if(/Email not confirmed/i.test(m))return 'Tài khoản đã có trên Cloud nhưng chưa được xác nhận email — quản trị viên cần xác nhận trong Supabase (xem hướng dẫn SQL).';
+    if(/Invalid login credentials/i.test(m))return 'Email hoặc mật khẩu không khớp với tài khoản trên Cloud. Nếu tài khoản này chỉ có trên một máy, hãy đăng nhập ở máy đó một lần để hệ thống tự đồng bộ lên Cloud.';
+    if(/rate limit|too many/i.test(m))return 'Thử quá nhiều lần — vui lòng chờ ít phút rồi thử lại.';
+    if(/fetch|network|timeout/i.test(m))return 'Không kết nối được máy chủ — kiểm tra mạng rồi thử lại.';
+    return '';
+}
+async function hvMigrateLocalTeacher(u,pass,tcode){
+    try{
+        if(!SupabaseDB.client||!SupabaseDB.online)return {ok:false,why:'offline'};
+        const code=(currentUser&&currentUser.teacherCode)||u.teacherCode||(tcode?parseTeacherCode(tcode).teacherCode:'');
+        const r=await SupabaseDB.signUpTeacher({email:String(u.email||'').trim().toLowerCase(),password:pass,name:u.name||'Giáo viên',teacherCode:code,school:u.school});
+        if(!r||!r.ok){
+            const err=String((r&&r.error)||'');
+            if(/already (been )?registered|already exists/i.test(err))return {ok:false,why:'exists'};
+            return {ok:false,why:'err',msg:err};
+        }
+        return {ok:true,session:!!(r.data&&r.data.session)||!!r.session};
+    }catch(e){return {ok:false,why:'err',msg:String(e&&e.message||e)};}
+}
+function hvLocalOnlyBar(msg){
+    let b=document.getElementById('hvLocalBar');
+    if(!b){b=document.createElement('div');b.id='hvLocalBar';b.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:100085;background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff;padding:9px 16px;border-radius:14px;font:800 12px Inter,system-ui,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.35);max-width:94vw;text-align:center;cursor:pointer';b.title='Bấm để ẩn';b.onclick=function(){b.remove();};document.body.appendChild(b);}
+    b.textContent='⚠️ '+msg;
+}
+function hvMigrateToast(mg){
+    if(!mg)return;
+    if(mg.ok&&mg.session){showToast('Đã đồng bộ tài khoản lên Cloud ✓ — máy khác đăng nhập được với cùng email & mật khẩu.','success');return;}
+    if(mg.ok&&!mg.session){hvLocalOnlyBar('Đã tạo tài khoản Cloud nhưng cần xác nhận email (Supabase → Authentication) thì máy khác mới đăng nhập được. Xem hướng dẫn SQL.');return;}
+    if(mg.why==='exists'){hvLocalOnlyBar('Email này đã có trên Cloud với MẬT KHẨU KHÁC máy này. Hãy dùng mật khẩu Cloud hoặc nhờ quản trị viên đặt lại mật khẩu (xem hướng dẫn SQL).');return;}
+    hvLocalOnlyBar('Đang dùng tài khoản cục bộ — chưa đăng nhập Cloud nên dữ liệu chưa lưu lên Cloud được.'+(mg.msg?' ('+mg.msg+')':''));
+}
 </script>
 <script>
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ reg.addEventListener('updatefound',function(){ const nw=reg.installing; if(!nw)return; nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller){ try{ showToast('Có phiên bản mới — tải lại trang để cập nhật','info'); }catch(_){} } }); }); }).catch(function(e){ console.warn('SW',e); }); }); }
