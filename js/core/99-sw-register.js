@@ -1,0 +1,2 @@
+
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ reg.addEventListener('updatefound',function(){ const nw=reg.installing; if(!nw)return; nw.addEventListener('statechange',function(){ if(nw.state==='installed' && navigator.serviceWorker.controller){ try{ showToast('Có phiên bản mới — tải lại trang để cập nhật','info'); }catch(_){} } }); }); }).catch(function(e){ console.warn('SW',e); }); }); }
