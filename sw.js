@@ -1,8 +1,52 @@
 /* HỌC VĂN – Service Worker v4.9 (giới hạn cache, hạn dùng TTL, Navigation Preload, Background Sync) */
-const VERSION = 'hv-4.9.7';
+const VERSION = 'hv-4.9.8';
 const SHELL_CACHE = 'hv-shell-' + VERSION;
 const ASSET_CACHE = 'hv-assets-' + VERSION;
-const SHELL = ['./', './index.html'];
+const SHELL = [
+  './', './index.html',
+  './css/01-base.css?v=5f049fe5',
+  './css/02-responsive.css?v=aaa45bea',
+  './css/03-dark-a11y.css?v=f8e54677',
+  './css/04-community.css?v=10a28e52',
+  './css/05-effects.css?v=11421a1c',
+  './css/06-materials.css?v=ec65457f',
+  './css/07-hubs.css?v=67cacda2',
+  './css/08-workspace.css?v=c5aff75c',
+  './css/09-intro.css?v=0b5e2abf',
+  './css/10-focus-login.css?v=4a0e0189',
+  './css/11-perf-modern.css?v=97b14c54',
+  './js/core/01-boot.js?v=47489375',
+  './js/core/02-storage-sound-theme.js?v=277a3313',
+  './js/core/03-supabase.js?v=48c76c15',
+  './js/core/04-ai-auth.js?v=fa52c929',
+  './js/core/05-ui-realtime-intro.js?v=0c9686ce',
+  './js/pages/10-nav-tabs.js?v=d3b345a9',
+  './js/pages/11-student-submit.js?v=9d0cacb4',
+  './js/pages/12-teacher-assignments.js?v=abb9f3bb',
+  './js/pages/13-classes-accounts.js?v=ec6e6cd6',
+  './js/pages/14-grading.js?v=ac5fc156',
+  './js/pages/15-dashboard-khbd.js?v=e2e4567e',
+  './js/pages/16-import-admin.js?v=db375e18',
+  './js/pages/17-library-chat.js?v=b97e57f4',
+  './js/pages/18-anticheat-exam.js?v=11740dc2',
+  './js/pages/19-games-voice.js?v=a9f54828',
+  './js/pages/20-social.js?v=199fbaf2',
+  './js/pages/21-analytics.js?v=1bb980bd',
+  './js/pages/22-landing-init.js?v=37bc868a',
+  './js/features/30-community.js?v=e4f5058b',
+  './js/features/31-feedback-pwa.js?v=28d6709a',
+  './js/features/32-effects-landing.js?v=eddf12c7',
+  './js/features/33-accounts-session.js?v=f8348b2f',
+  './js/features/34-materials.js?v=fbbe7035',
+  './js/features/35-hubs.js?v=93012529',
+  './js/features/36-realtime-assignments.js?v=04d4ad4e',
+  './js/features/37-workspace-worklog.js?v=38d6d0cb',
+  './js/features/38-focus-timer.js?v=3607d0cf',
+  './js/features/39-perf-extras.js?v=d814ede4',
+  './js/features/40-modern-apis.js?v=7984ea41',
+  './js/features/41-login-sync-password.js?v=e3c82561',
+  './js/core/99-sw-register.js?v=789ca898'
+];
 const MAX_ASSETS = 80;                    // số tệp tối đa trong cache tài nguyên
 const TTL = 7 * 24 * 3600 * 1000;         // hạn dùng cache tài nguyên: 7 ngày
 
@@ -112,6 +156,17 @@ self.addEventListener('fetch', function (e) {
       }
       return fresh();
     })());
+    return;
+  }
+
+  // CSS/JS đã đóng dấu phiên bản (?v=mã băm): cache trước, nội dung không đổi nếu URL không đổi
+  if (url.origin === self.location.origin && /\/(css|js)\//.test(url.pathname) && url.search.indexOf('v=') !== -1) {
+    e.respondWith(caches.match(req).then(function (hit) {
+      return hit || fetch(req).then(function (res) {
+        if (res && res.ok) { const copy = res.clone(); caches.open(SHELL_CACHE).then(function (c) { c.put(req, copy); }); }
+        return res;
+      });
+    }));
     return;
   }
 
