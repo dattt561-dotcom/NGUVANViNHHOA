@@ -1,0 +1,24 @@
+/* ===== Responsive + mobile nav (v4.2) ===== */
+html{-webkit-text-size-adjust:100%;}
+body{overflow-x:hidden;}
+img,video,canvas,svg,iframe{max-width:100%;}
+@media (max-width:360px){ html{font-size:14px;} }
+@media (min-width:1280px){ html{font-size:16px;} }
+@media (min-width:1700px){ html{font-size:17.5px;} main.max-w-7xl{max-width:1600px;} }
+@media (min-width:768px) and (max-width:1023px){ #appSidebar{width:13.5rem;} main{padding:1.25rem;} }
+@media (max-width:767px){
+  main{margin-bottom:calc(84px + env(safe-area-inset-bottom)) !important;}
+  main table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .glass-card{max-width:100%;}
+}
+#mobileNav{justify-content:flex-start !important;gap:4px;padding:14px 8px calc(6px + env(safe-area-inset-bottom)) !important;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;box-shadow:0 -6px 24px rgba(0,0,0,.06);}
+#mobileNav::-webkit-scrollbar{display:none;}
+.mnav-btn{flex:0 0 auto;min-width:64px;max-width:84px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px 5px;border:0;background:transparent;border-radius:16px;font-size:10px;font-weight:700;color:#64748b;scroll-snap-align:center;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .25s,background .25s;}
+.mnav-btn span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mnav-btn i{font-size:18px;display:block;transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
+.mnav-btn:active i{transform:scale(.8);}
+.mnav-btn.active{color:#dc2626;background:rgba(220,38,38,.09);}
+.mnav-btn.active i{transform:translateY(-7px) scale(1.28);animation:mnavBounce .55s cubic-bezier(.34,1.56,.64,1);}
+.mnav-btn.active::after{content:'';position:absolute;bottom:1px;width:5px;height:5px;border-radius:50%;background:#dc2626;}
+@keyframes mnavBounce{0%{transform:translateY(0) scale(1);}40%{transform:translateY(-14px) scale(1.4);}70%{transform:translateY(-3px) scale(1.18);}100%{transform:translateY(-7px) scale(1.28);}}
+

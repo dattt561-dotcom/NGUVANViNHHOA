@@ -1,0 +1,59 @@
+/* ===== v4.9 · Hiệu năng: containment, chế độ tiết kiệm theo mạng, View Transitions ===== */
+.hv-tile,.hv-hubcard,.mat-card,.cm-post{contain:layout style;}
+.hv-lite .glass-card,.hv-lite .cm-card,.hv-lite .hv-tile,.hv-lite .hv-hubcard{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+.hv-lite .ultra-bg .aurora{filter:blur(40px);}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.28s;animation-timing-function:cubic-bezier(.2,.8,.2,1);}
+
+.hv-timer.hidden{display:none;}
+
+.cm-tabs,.hv-steps,#sidebarNav{scroll-snap-type:x proximity;}
+.cm-tab,.hv-step{scroll-snap-align:center;}
+
+/* ===== v4.9.2 · CSS hiện đại: Container Queries, @layer, @property + lượng giác, allow-discrete, interpolate-size ===== */
+#hvHubBody{container:hvhub/inline-size;}
+@container hvhub (max-width:619px){.hv-tiles{grid-template-columns:minmax(0,1fr);}}
+@container hvhub (min-width:620px){.hv-tiles{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@container hvhub (min-width:960px){.hv-tiles{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@layer hvfx{
+  @supports (background-image:paint(hvDots)){
+    .hv-hero::before,.cm-hero::before{content:'';position:absolute;inset:0;background-image:paint(hvDots);--hv-dot-color:rgba(255,255,255,.55);--hv-dot-gap:22;opacity:.4;pointer-events:none;}
+  }
+}
+@property --hv-a{syntax:'<angle>';inherits:false;initial-value:0deg;}
+@supports (translate:calc(sin(1rad)*1px)){
+  .cm-float{animation:cmFloatTrig 7s linear infinite;translate:calc(sin(var(--hv-a))*10px) calc(cos(var(--hv-a))*14px);}
+  @keyframes cmFloatTrig{to{--hv-a:360deg;}}
+}
+@supports (transition-behavior:allow-discrete){
+  .mat-modal{transition:opacity .22s ease,display .22s allow-discrete;}
+  .mat-modal[style*="none"]{opacity:0;}
+  @starting-style{.mat-modal{opacity:0;}}
+}
+@supports (interpolate-size:allow-keywords){
+  :root{interpolate-size:allow-keywords;}
+  .cm-acc::details-content{height:0;overflow:clip;transition:height .3s ease,content-visibility .3s allow-discrete;}
+  .cm-acc[open]::details-content{height:auto;}
+}
+#bgCanvasLines{transform:translateZ(0);will-change:transform;}
+.landing-nav a.hv-sec-on{color:#dc2626 !important;font-weight:800;}
+
+/* ===== v4.9.3 · Chú thích nổi bằng CSS Anchor Positioning (có dự phòng JS) ===== */
+#hvTip{position:fixed;z-index:100090;pointer-events:none;padding:6px 11px;border-radius:10px;background:rgba(15,20,32,.94);color:#fff;font:700 11.5px Inter,system-ui,sans-serif;max-width:240px;white-space:nowrap;opacity:0;transition:opacity .15s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+#hvTip.on{opacity:1;}
+@supports (position-area:left center){
+  #hvTip.anchored{position-anchor:--hv-tip;position-area:left center;margin:0 8px;position-try-fallbacks:flip-inline,flip-block;left:auto;top:auto;}
+}
+
+/* ===== v4.9.5 · Subgrid + @scope (cải tiến lũy tiến, trình duyệt cũ vẫn hiển thị đúng) ===== */
+@supports (grid-template-rows:subgrid){
+  .hv-trust{grid-auto-rows:auto;}
+  .hv-trust-card{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;}
+  .hv-trust-card .ic{align-self:start;}
+}
+@scope (.ex-poem){
+  .ex-v{transition:background .2s ease;border-radius:6px;}
+  .ex-v:hover{background:rgba(217,119,6,.14);}
+}
+@scope (.ex-body){
+  :scope .ex-q:hover b{text-decoration:underline;}
+}

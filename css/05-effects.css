@@ -1,0 +1,77 @@
+/* ===== v4.4 · Hiệu ứng nâng cấp (giữ nguyên mọi hiệu ứng cũ) ===== */
+.glass-card:hover,.cm-card:hover,.feature-card-v2:hover,.cm-acc:hover{background-image:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(220,38,38,.10),rgba(16,185,129,.05) 45%,transparent 70%);}
+html[data-theme="dark"] .glass-card:hover,html[data-theme="dark"] .cm-card:hover,html[data-theme="dark"] .feature-card-v2:hover,html[data-theme="dark"] .cm-acc:hover{background-image:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(239,68,68,.16),rgba(59,130,246,.07) 45%,transparent 70%);}
+.hv-ripple{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.5);transform:scale(0);animation:hvRipple .65s ease-out forwards;z-index:3;}
+@keyframes hvRipple{to{transform:scale(1);opacity:0;}}
+.hv-burst{position:fixed;z-index:10070;pointer-events:none;font-size:16px;animation:hvBurst .95s cubic-bezier(.2,.8,.2,1) forwards;}
+@keyframes hvBurst{0%{transform:translate(0,0) scale(.4);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--rot));opacity:0;}}
+.tab-content:not(.hidden){animation:hvTabIn .55s cubic-bezier(.2,.8,.2,1);}
+@keyframes hvTabIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.hv-pre{opacity:0;transform:translateY(30px) scale(.97);}
+.hv-in{opacity:1;transform:none;transition:opacity .85s cubic-bezier(.2,.8,.2,1),transform .85s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s);}
+#hvSyncBar{position:fixed;top:0;left:0;height:3px;width:100%;z-index:10060;background:linear-gradient(90deg,#dc2626,#059669,#2563eb,#f59e0b);transform:scaleX(0);transform-origin:left;opacity:0;pointer-events:none;transition:opacity .3s;}
+#hvSyncBar.run{opacity:1;animation:hvBar 1.3s ease-in-out infinite;}
+@keyframes hvBar{0%{transform:scaleX(0);transform-origin:left;}50%{transform:scaleX(1);transform-origin:left;}51%{transform:scaleX(1);transform-origin:right;}100%{transform:scaleX(0);transform-origin:right;}}
+/* hero rotator */
+.hv-rot{margin-top:14px;font-size:15px;font-weight:700;color:var(--text-sub);}
+.hv-rot-word{display:inline-block;font-weight:900;background:linear-gradient(90deg,#dc2626,#059669,#2563eb);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .3s,transform .3s,filter .3s;min-width:6ch;}
+.hv-rot-word.out{opacity:0;transform:translateY(10px);filter:blur(5px);}
+/* marquee */
+.hv-marquee{position:relative;z-index:10;overflow:hidden;padding:14px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
+.hv-track{display:flex;gap:12px;width:max-content;animation:hvMarq 48s linear infinite;}
+.hv-marquee:hover .hv-track{animation-play-state:paused;}
+@keyframes hvMarq{to{transform:translateX(-50%);}}
+.hv-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:12.5px;font-weight:800;white-space:nowrap;background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-main);box-shadow:0 6px 18px rgba(0,0,0,.06);backdrop-filter:blur(10px);}
+/* quiz */
+.hv-quizbox{padding:22px;border-radius:26px;min-height:340px;position:relative;overflow:hidden;}
+.hv-qbar{height:6px;border-radius:99px;background:rgba(127,127,127,.2);overflow:hidden;margin-bottom:14px;}
+.hv-qbar span{display:block;height:100%;background:linear-gradient(90deg,#dc2626,#059669,#2563eb);border-radius:99px;transition:width .5s;}
+.hv-qn{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#dc2626;}
+.hv-qq{font-family:'Outfit','Inter',sans-serif;font-weight:900;font-size:19px;line-height:1.35;margin:8px 0 14px;color:var(--text-main);}
+.hv-qopts{display:grid;gap:8px;}
+.hv-qo{text-align:left;padding:12px 14px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;border:1.5px solid rgba(127,127,127,.28);background:transparent;color:var(--text-main);transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-color .2s,background .2s;}
+.hv-qo:hover:not(:disabled){transform:translateX(6px);border-color:#dc2626;}
+.hv-qo.ok{background:rgba(16,185,129,.18);border-color:#10b981;}
+.hv-qo.bad{background:rgba(239,68,68,.18);border-color:#ef4444;animation:hvShake .4s;}
+@keyframes hvShake{25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.hv-qe{margin-top:12px;font-size:12.5px;line-height:1.6;min-height:38px;color:var(--text-sub);}
+.hv-score{text-align:center;padding:18px 0;}
+.hv-score b{display:block;font-family:'Outfit',sans-serif;font-size:56px;font-weight:900;background:linear-gradient(135deg,#dc2626,#059669);-webkit-background-clip:text;background-clip:text;color:transparent;}
+/* flip */
+.hv-sub{font-size:12px;font-weight:800;color:var(--text-sub);margin-bottom:10px;}
+.hv-tu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media (min-width:640px){.hv-tu-grid{grid-template-columns:repeat(4,1fr);}}
+.hv-flip{perspective:1000px;height:176px;cursor:pointer;}
+.hv-flip-in{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
+.hv-flip:hover .hv-flip-in,.hv-flip.flip .hv-flip-in{transform:rotateY(180deg);}
+.hv-face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center;border:1px solid var(--card-border);}
+.hv-front{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;box-shadow:0 12px 28px rgba(0,0,0,.15);}
+.hv-front i{font-size:26px;margin-bottom:8px;opacity:.95;}
+.hv-back{transform:rotateY(180deg);background:var(--card-bg);backdrop-filter:blur(12px);color:var(--text-main);font-size:11.5px;line-height:1.5;overflow:hidden;}
+.hv-back b{display:block;font-size:11px;color:#dc2626;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em;}
+.hv-back i.ex{font-family:'Lora',serif;font-size:11px;color:var(--text-sub);margin-top:4px;display:block;}
+/* cộng đồng CTA + minh bạch */
+.hv-cm-cta{position:relative;overflow:hidden;border-radius:32px;padding:34px 22px;color:#fff;background:linear-gradient(120deg,#7c3aed,#db2777 45%,#dc2626);background-size:200% 200%;animation:cmGrad 14s ease infinite;box-shadow:0 26px 60px rgba(124,58,237,.35);}
+.hv-cm-cta h2{font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(24px,4.4vw,40px);line-height:1.1;}
+.hv-cm-cta p{opacity:.95;margin-top:10px;max-width:560px;font-size:14px;}
+.hv-cm-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+.hv-cm-btn{padding:12px 20px;border-radius:14px;font-weight:900;font-size:13px;cursor:pointer;border:0;background:#fff;color:#7c3aed;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.hv-cm-btn:hover{transform:translateY(-3px) scale(1.04);}
+.hv-cm-btn.ghost{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);}
+.hv-trust{display:grid;gap:14px;grid-template-columns:1fr;}
+@media (min-width:640px){.hv-trust{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1024px){.hv-trust{grid-template-columns:repeat(3,1fr);}}
+.hv-trust-card{padding:20px;border-radius:24px;}
+.hv-trust-card .ic{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;background:linear-gradient(135deg,rgba(220,38,38,.15),rgba(16,185,129,.15));}
+.hv-trust-card h3{font-weight:900;font-size:15px;margin-bottom:6px;color:var(--text-main);}
+.hv-trust-card p{font-size:12.5px;line-height:1.65;color:var(--text-sub);}
+.hv-foot-links{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-bottom:14px;font-weight:700;}
+.hv-foot-links a{cursor:pointer;color:var(--text-sub);transition:color .2s;}
+.hv-foot-links a:hover{color:#dc2626;}
+/* header cộng đồng không bị nút nổi che */
+@media (max-width:760px){.cm-top{padding-right:64px;flex-wrap:wrap;row-gap:6px;}.cm-btn span{display:none;}.cm-title small{display:none;}}
+/* trang chủ & thanh trên ở chế độ tối */
+html[data-theme="dark"] .landing-nav{background:rgba(15,20,32,.86) !important;border-bottom-color:rgba(239,68,68,.2) !important;}
+html[data-theme="dark"] footer{background:rgba(15,20,32,.7) !important;}
+html[data-theme="dark"] [style*="rgba(255,255,255,0.95)"],html[data-theme="dark"] [style*="rgba(255,255,255,.95)"],html[data-theme="dark"] [style*="rgba(255,255,255,.82)"]{background:rgba(22,28,42,.92) !important;color:#e8eaf2 !important;}
+
