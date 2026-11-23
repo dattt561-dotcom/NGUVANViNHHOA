@@ -12,7 +12,7 @@ catch(e) { console.warn('⚠️ Mermaid chưa load'); }
 /* ========== SKIP INTRO ========== */
 function skipIntro() {
     const splash = document.getElementById('introSplash');
-    if (splash) splash.classList.add('hide');
+    if (splash) { splash.classList.add('hide'); setTimeout(function(){ splash.style.display = 'none'; }, 650); }
 }
 
 /* ========== HELPERS ========== */

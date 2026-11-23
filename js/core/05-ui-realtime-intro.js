@@ -27,13 +27,13 @@ function runIntroAnimation(){
     const texts=['Đang khởi tạo nền tảng...','Đang tải AI Gemini...','Đang kết nối Cloud...','Đang đồng bộ dữ liệu...','Đang chuẩn bị phòng thi...','Sẵn sàng!'];
     let idx=0;
     const el=document.getElementById('introLoadingText');
-    const iv=setInterval(()=>{idx++;if(idx<texts.length&&el&&!window.__hvBootDone)el.textContent=texts[idx];},520);
+    const iv=setInterval(()=>{idx++;if(idx<texts.length&&el&&!window.__hvBootDone)el.textContent=texts[idx];},400);
     const qs=['"Văn học là tấm gương soi chiếu tâm hồn con người"','"Có thực mới vực được đạo" — mỗi ngày một trang văn, một bước tiến bộ','"Đọc sách là cách đi xa nhất mà không cần rời khỏi chỗ ngồi"','"Học, học nữa, học mãi" — V. I. Lênin'];let qi=0;const qel=document.querySelector('.intro-cinematic .quote-box p');
     const qv=setInterval(()=>{if(!qel)return;qi=(qi+1)%qs.length;qel.style.transition='opacity .35s';qel.style.opacity=0;setTimeout(()=>{qel.textContent=qs[qi];qel.style.opacity=1;},350);},1500);setTimeout(()=>clearInterval(qv),3300);
     setTimeout(()=>clearInterval(iv),3000);
     document.querySelectorAll('.intro-stat .num').forEach(num=>{
         const target=parseInt(num.dataset.count)||0;
-        const duration=2200;
+        const duration=1500;
         const startTime=Date.now();
         const tick=()=>{
             const t=Math.min(1,(Date.now()-startTime)/duration);
@@ -41,9 +41,9 @@ function runIntroAnimation(){
             num.textContent=Math.floor(target*easeOutQuart)+'+';
             if(t<1)requestAnimationFrame(tick);else num.textContent=target+'+';
         };
-        setTimeout(tick,1200);
+        setTimeout(tick,800);
     });
-    hvHideIntroWhenReady(3200,4800);
+    hvHideIntroWhenReady(2400,4600);
 }
 
 /* Fallback cứng — sau 6s dù có lỗi gì cũng ẩn intro */
