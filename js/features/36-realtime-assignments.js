@@ -159,7 +159,7 @@ function initBgCanvasMain(canvasArg){
     requestAnimationFrame(loop);
 }
 function initIntroCanvas(){
-    const canvas=document.getElementById('introCanvas');if(!canvas)return;
+    const canvas=document.getElementById('introCanvas');if(!canvas)return;canvas.remove();return;  /* v4.9.9: intro gọn nhẹ, không vẽ hạt canvas */
     const ctx=canvas.getContext('2d',{desynchronized:true})||canvas.getContext('2d');
     let w=canvas.width=window.innerWidth,h=canvas.height=window.innerHeight;
     const COL=[[220,38,38],[5,150,105],[37,99,235],[245,158,11]];

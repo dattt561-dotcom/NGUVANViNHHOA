@@ -1,7 +1,7 @@
 /* =====================================================================
    v4.3 · CỘNG ĐỒNG HỌC SINH · ĐÁNH GIÁ · PWA · MINH BẠCH
    ===================================================================== */
-const HV_VERSION='4.9.8';
+const HV_VERSION='4.9.9';
 let communityPosts=[]; let feedbackList=[];
 try{ communityPosts=JSON.parse(safeGetItem('hv_cm_cache','[]'))||[]; }catch(_){ communityPosts=[]; }
 const CM_CATS=[{id:'all',label:'Tất cả',icon:'🌈'},{id:'hoi',label:'Hỏi bài',icon:'🙋'},{id:'chia-se',label:'Chia sẻ',icon:'✨'},{id:'goc-van',label:'Góc văn',icon:'✍️'},{id:'huong-dan',label:'Dùng web',icon:'🧭'},{id:'tro-chuyen',label:'Trò chuyện',icon:'💬'}];

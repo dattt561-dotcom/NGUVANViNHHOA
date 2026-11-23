@@ -60,10 +60,6 @@ function hvRenderMarquee(){const t=document.getElementById('hvTrack');if(!t)retu
         const cs=getComputedStyle(b);if(cs.position==='static')b.style.position='relative';b.style.overflow='hidden';
         const r=b.getBoundingClientRect();const s=Math.max(r.width,r.height)*2;
         const d=hvPool('hv-ripple');d.style.width=d.style.height=s+'px';d.style.left=(e.clientX-r.left-s/2)+'px';d.style.top=(e.clientY-r.top-s/2)+'px';b.appendChild(d);setTimeout(function(){hvPoolRel(d);},700);
-        if(b.matches('.btn-neon,.cm-go,.hv-cm-btn')){
-            const em=['✨','⭐','📖','✍️','💡','🌟'];
-            for(let i=0;i<9;i++){const p=hvPool('hv-burst');p.textContent=em[i%em.length];p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';const a=Math.random()*Math.PI*2,dist=40+Math.random()*60;p.style.setProperty('--dx',Math.cos(a)*dist+'px');p.style.setProperty('--dy',Math.sin(a)*dist-20+'px');p.style.setProperty('--rot',(Math.random()*180-90)+'deg');document.body.appendChild(p);setTimeout(function(){hvPoolRel(p);},1000);}
-        }
     },true);
     // cuộn hiện dần cho các mục mới
     if('IntersectionObserver' in window){

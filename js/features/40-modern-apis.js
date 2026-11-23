@@ -146,13 +146,14 @@ hvWinWrap('renderSubmissionsTable','submissionsTableBody');hvWinWrap('renderStud
 
 /* ----- Canvas nền 2 lớp: chấm vẽ mọi khung hình, đường nối vẽ nửa tốc độ (Worker + OffscreenCanvas) ----- */
 const HV_BG_WORKER2=`
-let cv,cv2,ctx,ctx2,w=0,h=0,dpr=1,dark=false,P=[],target=70,MIN=24,mouse={x:-9999,y:-9999},running=true,last=0,acc=0,frames=0,fc=0,cols,lines;
+let cv,cv2,ctx,ctx2,w=0,h=0,dpr=1,dark=false,P=[],target=70,MIN=24,mouse={x:-9999,y:-9999},running=true,last=0,lastDraw=0,acc=0,frames=0,fc=0,cols,lines;
 function mk(){const r=Math.random()*1.8+0.5;return {x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:r,k:Math.floor(r*3)%3};}
 function setCols(){cols=dark?['rgba(239,68,68,0.5)','rgba(16,185,129,0.5)','rgba(37,99,235,0.4)']:['rgba(220,38,38,0.35)','rgba(5,150,105,0.3)','rgba(37,99,235,0.25)'];const base=dark?0.15:0.1,rgb=dark?'239,68,68':'220,38,38';lines=[0.8,0.45,0.15].map(function(k){return 'rgba('+rgb+','+(base*k).toFixed(3)+')';});}
 function size(){[[cv,ctx],[cv2,ctx2]].forEach(function(p){p[0].width=Math.round(w*dpr);p[0].height=Math.round(h*dpr);p[1].setTransform(dpr,0,0,dpr,0,0);});}
 function loop(now){
-  if(!running)return;const raw=now-last;last=now;const dt=Math.min(2.5,raw/16.667);acc+=Math.min(raw,100);frames++;fc++;
-  if(frames>=45){const avg=acc/frames;if(avg>21&&P.length>MIN)P.length=Math.max(MIN,P.length-8);else if(avg<15&&P.length<target){for(let i=0;i<4&&P.length<target;i++)P.push(mk());}postMessage({t:'stat',fps:Math.round(1000/avg),n:P.length});acc=0;frames=0;}
+  if(!running)return;if(now-lastDraw<30){requestAnimationFrame(loop);return;}lastDraw=now;  /* giới hạn ~30 khung/giây: nền chuyển động chậm nên không cần 60fps, giảm một nửa tải */
+  const raw=now-last;last=now;const dt=Math.min(2.5,raw/16.667);acc+=Math.min(raw,100);frames++;fc++;
+  if(frames>=30){const avg=acc/frames;if(avg>44&&P.length>MIN)P.length=Math.max(MIN,P.length-8);else if(avg<38&&P.length<target){for(let i=0;i<4&&P.length<target;i++)P.push(mk());}postMessage({t:'stat',fps:Math.round(1000/avg),n:P.length});acc=0;frames=0;}
   const n=P.length;
   for(let i=0;i<n;i++){const p=P[i];p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;const dx=mouse.x-p.x,dy=mouse.y-p.y;if(dx*dx+dy*dy<22500){p.x-=dx*0.003*dt;p.y-=dy*0.003*dt;}}
   ctx.clearRect(0,0,w,h);
