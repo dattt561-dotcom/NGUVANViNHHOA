@@ -1,0 +1,17 @@
+/* ===== v4.9.9 · Mượt như web lớn =====
+   Nguyên tắc: hạn chế lớp làm mờ nền (backdrop-filter) trên các thẻ lặp lại, bỏ blur khổng lồ,
+   chạm là nhận ngay (không chờ 300ms), không nháy khi chạm. */
+:root{--card-bg:rgba(255,255,255,.86);}
+html[data-theme="dark"]{--card-bg:rgba(22,28,42,.82);}
+.glass-card,.glass-panel-dark,.feature-card-v2,.testimonial-card,.reading-header,.portal-card,.school-badge,
+.cm-card,.cm-stat,.cm-tab,.hv-chip,.hv-back,.hv-tile,.hv-hubcard,.hv-hero .chips span{-webkit-backdrop-filter:none;backdrop-filter:none;}
+html{-webkit-tap-highlight-color:transparent;}
+a,button,input,select,textarea,label,summary,[onclick],[role="button"],.hv-tile,.hv-pill,.hv-hubcard,.nav-btn,.mnav-btn,.fab-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.mat-box,.fb-card,.chat-panel,.hv-modal,.cm-modal,.confirm-modal,.custom-scrollbar{overscroll-behavior:contain;}
+.hv-ripple{background:rgba(255,255,255,.35);}
+/* Hộp xác nhận phủ kín màn hình nhưng trong suốt: trước đây luôn làm mờ cả trang ở MỌI khung hình.
+   Giờ chỉ vẽ/làm mờ khi thật sự mở. */
+.confirm-modal{-webkit-backdrop-filter:none;backdrop-filter:none;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s;}
+.confirm-modal.show{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);visibility:visible;transition:opacity .3s ease,visibility 0s;}
+/* Quầng sáng hero: gradient tròn đã tự mềm, bỏ blur(60px) 800x800 đang chạy liên tục */
+.landing-hero-glow{filter:none;will-change:transform,opacity;}

@@ -3,8 +3,6 @@
 html[data-theme="dark"] .glass-card:hover,html[data-theme="dark"] .cm-card:hover,html[data-theme="dark"] .feature-card-v2:hover,html[data-theme="dark"] .cm-acc:hover{background-image:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(239,68,68,.16),rgba(59,130,246,.07) 45%,transparent 70%);}
 .hv-ripple{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.5);transform:scale(0);animation:hvRipple .65s ease-out forwards;z-index:3;}
 @keyframes hvRipple{to{transform:scale(1);opacity:0;}}
-.hv-burst{position:fixed;z-index:10070;pointer-events:none;font-size:16px;animation:hvBurst .95s cubic-bezier(.2,.8,.2,1) forwards;}
-@keyframes hvBurst{0%{transform:translate(0,0) scale(.4);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--rot));opacity:0;}}
 .tab-content:not(.hidden){animation:hvTabIn .55s cubic-bezier(.2,.8,.2,1);}
 @keyframes hvTabIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 .hv-pre{opacity:0;transform:translateY(30px) scale(.97);}

@@ -7,7 +7,6 @@
 button,a,[onclick],input,select,textarea,label{touch-action:manipulation;}
 @media (max-width:768px){
   .glass-card,.cm-card,.hv-tile,.hv-hubcard{backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);}
-  .ultra-bg .aurora{filter:blur(70px);}
 }
 
 /* ===== v4.8 · Bàn làm bài 2 bên, định dạng đề, nhật ký làm bài ===== */
